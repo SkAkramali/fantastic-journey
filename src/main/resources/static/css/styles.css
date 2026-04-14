@@ -1,5 +1,4 @@
-/* 🔥 NAVBAR GLOBAL STYLE */
-
+/* 🔥 NAVBAR */
 nav {
     position: sticky;
     top: 0;
@@ -36,6 +35,14 @@ nav {
     justify-content: center;
 }
 
+/* RIGHT SIDE */
+.nav-right,
+.nav-right-auth {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
 /* LINKS */
 .nav-link {
     padding: 6px 12px;
@@ -50,40 +57,32 @@ nav {
     color: black;
 }
 
-/* ACTIVE TAB */
+/* ACTIVE */
 .nav-link.active {
     background: #e8f2eb;
     color: #2f6b3e;
 }
 
-/* BUTTON */
+/* BUTTONS */
 .btn-nav {
     background: #1a1916;
     color: white;
     border-radius: 20px;
     padding: 6px 14px;
     border: none;
+    text-decoration: none;
+    font-size: 14px;
 }
 
 .btn-nav:hover {
     background: #2f6b3e;
 }
 
-/* RIGHT SIDE */
-.nav-right {
-    display: flex;
-    align-items: center;
-    gap: 10px;
+/* PROFILE */
+.profile-dropdown {
+    position: relative;
 }
 
-/* 🔥 RIGHT SIDE */
-.nav-right-auth {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-}
-
-/* 🔥 PROFILE ICON */
 .profile-icon {
     width: 36px;
     height: 36px;
@@ -97,27 +96,28 @@ nav {
     cursor: pointer;
 }
 
-/* 🔥 DROPDOWN */
-.profile-dropdown {
-    position: relative;
-}
-
-/* HIDDEN BY DEFAULT */
+/* DROPDOWN */
 .dropdown-menu-custom {
     position: absolute;
-    top: 45px;
+    top: 100%;
     right: 0;
+    margin-top: 6px;
     background: white;
     border-radius: 12px;
     padding: 8px;
-    width: 150px;
+    width: 160px;
     box-shadow: 0 10px 30px rgba(0,0,0,0.08);
-    display: none;
+
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(5px);
+    transition: 0.2s ease;
 }
 
-/* SHOW ON HOVER */
 .profile-dropdown:hover .dropdown-menu-custom {
-    display: block;
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
 }
 
 /* ITEMS */
@@ -134,52 +134,6 @@ nav {
     background: #f2f0eb;
 }
 
-/* LOGOUT RED */
 .logout {
     color: #c0392b;
-}
-
-/* 🔥 PROFILE DROPDOWN */
-.profile-dropdown {
-    position: relative;
-    display: inline-block;
-}
-
-/* ICON */
-.profile-icon {
-    width: 36px;
-    height: 36px;
-    background: #2f6b3e;
-    color: white;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: 600;
-    cursor: pointer;
-}
-
-/* DROPDOWN MENU */
-.dropdown-menu-custom {
-    position: absolute;
-    top: 100%; /* 🔥 attach directly */
-    right: 0;
-    margin-top: 6px; /* small spacing but still safe */
-    background: white;
-    border-radius: 12px;
-    padding: 8px;
-    width: 150px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.08);
-
-    opacity: 0;
-    visibility: hidden;
-    transform: translateY(5px);
-    transition: 0.2s ease;
-}
-
-/* 🔥 HOVER FIX (IMPORTANT) */
-.profile-dropdown:hover .dropdown-menu-custom {
-    opacity: 1;
-    visibility: visible;
-    transform: translateY(0);
 }

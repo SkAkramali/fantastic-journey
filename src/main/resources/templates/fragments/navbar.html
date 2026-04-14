@@ -2,70 +2,83 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <body>
 
-	<nav th:fragment="navbar(activeTab)">
+<nav th:fragment="navbar(activeTab)">
 
-	    <!-- LOGO -->
-	    <a class="nav-logo" href="/">
-	        <span class="logo-mark">F</span>
-	        FitTrack
-	    </a>
+    <!-- LOGO -->
+    <a class="nav-logo" href="/">
+        <span class="logo-mark">F</span>
+        FitTrack
+    </a>
 
-	    <div class="nav-right">
+    <div class="nav-right">
 
-	        <!-- 🔓 NOT LOGGED IN -->
-	        <div th:if="${session.user == null}" style="display:flex;gap:0.5rem;">
+        <!-- 🔓 NOT LOGGED IN -->
+        <div th:if="${session.user == null}" style="display:flex;gap:0.5rem;">
 
-	            <a class="nav-link"
-	               th:classappend="${activeTab == 'home'} ? ' active'"
-	               href="/">Home</a>
+            <a class="nav-link"
+               th:classappend="${activeTab == 'home'} ? ' active'"
+               href="/">Home</a>
 
-	            <a class="nav-link"
-	               th:classappend="${activeTab == 'signin'} ? ' active'"
-	               href="/auth/signin">Sign in</a>
+            <a class="nav-link"
+               th:classappend="${activeTab == 'signin'} ? ' active'"
+               href="/auth/signin">Sign in</a>
 
-	            <a class="nav-link btn-nav"
-	               th:classappend="${activeTab == 'signup'} ? ' active'"
-	               href="/auth/signup">Get Started</a>
+            <a class="nav-link btn-nav"
+               th:classappend="${activeTab == 'signup'} ? ' active'"
+               href="/auth/signup">Get Started</a>
 
-	        </div>
+        </div>
 
-	        <!-- 🔐 LOGGED IN -->
-			<!-- 🔐 LOGGED IN -->
-			<div th:if="${session.user != null}" class="nav-right-auth">
+        <!-- 🔐 LOGGED IN -->
+        <div th:if="${session.user != null}" class="nav-right-auth">
 
-			    <!-- 🔥 ADD WORKOUT BUTTON -->
-			    <button class="btn-nav"
-			            data-bs-toggle="modal"
-			            data-bs-target="#workoutModal">
-			        + Add Workout
-			    </button>
+            <!-- 🔥 ADD WORKOUT -->
+            <button class="btn-nav"
+                    data-bs-toggle="modal"
+                    data-bs-target="#workoutModal">
+                + Workout
+            </button>
 
-			    <!-- 🔥 PROFILE DROPDOWN -->
-			    <div class="profile-dropdown">
+            <!-- 🔥 ADD GOAL -->
+            <a href="/dashboard/setGoal"
+               class="btn-nav"
+               style="text-decoration:none;">
+                🎯 Goal
+            </a>
 
-			        <!-- ICON -->
-			        <div class="profile-icon">
-			            <span th:text="${session.user.name.substring(0,1)}">U</span>
-			        </div>
+            <!-- 🔥 VIEW GOALS -->
+            <a href="/dashboard/goals"
+               class="nav-link"
+               th:classappend="${activeTab == 'goals'} ? ' active'">
+                My Goals
+            </a>
 
-			        <!-- DROPDOWN MENU -->
-			        <div class="dropdown-menu-custom">
+            <!-- 🔥 PROFILE DROPDOWN -->
+            <div class="profile-dropdown">
 
-			            <a href="/dashboard/profile" class="dropdown-item">
-			                👤 Profile
-			            </a>
+                <div class="profile-icon">
+                    <span th:text="${session.user.name.substring(0,1)}">U</span>
+                </div>
 
-			            <a href="/auth/logout" class="dropdown-item logout">
-			                🚪 Logout
-			            </a>
+                <div class="dropdown-menu-custom">
 
-			        </div>
+                    <a href="/dashboard/profile" class="dropdown-item">
+                        👤 Profile
+                    </a>
 
-			    </div>
+                    <a href="/auth/logout" class="dropdown-item logout">
+                        🚪 Logout
+                    </a>
 
-			</div>
-	    </div>
+                </div>
 
-	</nav>
+            </div>
+
+        </div>
+
+    </div>
+
+</nav>
+
 </body>
 </html>
