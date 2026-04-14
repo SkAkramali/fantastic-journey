@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+
+	<nav th:fragment="navbar(activeTab)">
+
+	    <!-- LOGO -->
+	    <a class="nav-logo" href="/">
+	        <span class="logo-mark">F</span>
+	        FitTrack
+	    </a>
+
+	    <div class="nav-right">
+
+	        <!-- 🔓 NOT LOGGED IN -->
+	        <div th:if="${session.user == null}" style="display:flex;gap:0.5rem;">
+
+	            <a class="nav-link"
+	               th:classappend="${activeTab == 'home'} ? ' active'"
+	               href="/">Home</a>
+
+	            <a class="nav-link"
+	               th:classappend="${activeTab == 'signin'} ? ' active'"
+	               href="/auth/signin">Sign in</a>
+
+	            <a class="nav-link btn-nav"
+	               th:classappend="${activeTab == 'signup'} ? ' active'"
+	               href="/auth/signup">Get Started</a>
+
+	        </div>
+
+	        <!-- 🔐 LOGGED IN -->
+			<!-- 🔐 LOGGED IN -->
+			<div th:if="${session.user != null}" class="nav-right-auth">
+
+			    <!-- 🔥 ADD WORKOUT BUTTON -->
+			    <button class="btn-nav"
+			            data-bs-toggle="modal"
+			            data-bs-target="#workoutModal">
+			        + Add Workout
+			    </button>
+
+			    <!-- 🔥 PROFILE DROPDOWN -->
+			    <div class="profile-dropdown">
+
+			        <!-- ICON -->
+			        <div class="profile-icon">
+			            <span th:text="${session.user.name.substring(0,1)}">U</span>
+			        </div>
+
+			        <!-- DROPDOWN MENU -->
+			        <div class="dropdown-menu-custom">
+
+			            <a href="/dashboard/profile" class="dropdown-item">
+			                👤 Profile
+			            </a>
+
+			            <a href="/auth/logout" class="dropdown-item logout">
+			                🚪 Logout
+			            </a>
+
+			        </div>
+
+			    </div>
+
+			</div>
+	    </div>
+
+	</nav>
+</body>
+</html>

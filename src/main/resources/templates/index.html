@@ -1,0 +1,1190 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FitTrack — Your Fitness Evolution</title>
+	<link rel="stylesheet" href="/css/styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,300;12..96,400;12..96,500;12..96,700;12..96,800&family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        :root {
+            --bg:        #faf9f6;
+            --bg2:       #f2f0eb;
+            --bg3:       #e8e4dc;
+            --white:     #ffffff;
+            --ink:       #1a1916;
+            --ink2:      #4a4840;
+            --ink3:      #8a877f;
+            --accent:    #2f6b3e;
+            --accent-lt: #e8f2eb;
+            --accent-md: #c5dfc9;
+            --orange:    #e8520a;
+            --border:    rgba(26,25,22,0.1);
+            --border2:   rgba(26,25,22,0.06);
+        }
+
+        html { scroll-behavior: smooth; }
+
+        body {
+            font-family: 'Instrument Sans', sans-serif;
+            background: var(--bg);
+            color: var(--ink);
+            overflow-x: hidden;
+        }
+
+        /* ─── NAVBAR ─── */
+        nav {
+            position: fixed;
+            top: 0; left: 0; right: 0;
+            z-index: 100;
+            padding: 0 3.5rem;
+            height: 64px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: rgba(250,249,246,0.9);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .nav-logo {
+            font-family: 'Bricolage Grotesque', sans-serif;
+            font-weight: 800;
+            font-size: 1.35rem;
+            color: var(--ink);
+            text-decoration: none;
+            letter-spacing: -0.03em;
+            display: flex;
+            align-items: center;
+            gap: 7px;
+        }
+
+        .logo-mark {
+            width: 28px; height: 28px;
+            background: var(--accent);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-size: 0.85rem;
+            font-weight: 800;
+        }
+
+        .nav-right { display: flex; align-items: center; gap: 0.25rem; }
+
+        .nav-link {
+            font-size: 0.88rem;
+            color: var(--ink2);
+            text-decoration: none;
+            padding: 0.45rem 0.9rem;
+            border-radius: 8px;
+            transition: background 0.15s, color 0.15s;
+            font-weight: 500;
+        }
+
+        .nav-link:hover { background: var(--bg2); color: var(--ink); }
+
+        .btn-nav {
+            background: var(--ink) !important;
+            color: var(--white) !important;
+            padding: 0.5rem 1.2rem !important;
+            border-radius: 100px !important;
+            font-weight: 600 !important;
+            margin-left: 0.5rem;
+            transition: background 0.15s, transform 0.12s;
+        }
+
+        .btn-nav:hover { background: var(--accent) !important; transform: scale(1.03); }
+
+        /* ─── HERO ─── */
+        .hero {
+            min-height: 100vh;
+            padding: 7rem 3.5rem 4rem;
+            display: grid;
+            grid-template-columns: 1.1fr 0.9fr;
+            gap: 4rem;
+            align-items: center;
+            position: relative;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background-image: radial-gradient(circle, rgba(26,25,22,0.06) 1px, transparent 1px);
+            background-size: 28px 28px;
+            mask-image: radial-gradient(ellipse 70% 70% at 80% 50%, black 30%, transparent 80%);
+            pointer-events: none;
+        }
+
+        .hero-eyebrow {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--accent-lt);
+            border: 1px solid var(--accent-md);
+            color: var(--accent);
+            font-size: 0.76rem;
+            font-weight: 600;
+            padding: 0.35rem 0.85rem;
+            border-radius: 100px;
+            margin-bottom: 1.5rem;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            animation: fadeUp 0.5s ease both;
+        }
+
+        .pulse-dot { width: 6px; height: 6px; background: var(--accent); border-radius: 50%; animation: pulse 2s infinite; }
+
+        @keyframes pulse {
+            0%,100% { opacity:1; transform:scale(1); }
+            50% { opacity:0.4; transform:scale(0.65); }
+        }
+
+        .hero h1 {
+            font-family: 'Bricolage Grotesque', sans-serif;
+            font-size: clamp(3.2rem, 5.5vw, 5.5rem);
+            font-weight: 800;
+            line-height: 1.0;
+            letter-spacing: -0.04em;
+            color: var(--ink);
+            animation: fadeUp 0.5s 0.08s ease both;
+        }
+
+        .hero h1 .highlight {
+            color: var(--accent);
+            position: relative;
+            display: inline-block;
+        }
+
+        .hero h1 .highlight::after {
+            content: '';
+            position: absolute;
+            bottom: 4px; left: 0; right: 0;
+            height: 3px;
+            background: var(--accent);
+            border-radius: 2px;
+            opacity: 0.3;
+        }
+
+        .hero-desc {
+            margin-top: 1.5rem;
+            font-size: 1.05rem;
+            color: var(--ink2);
+            line-height: 1.75;
+            max-width: 480px;
+            animation: fadeUp 0.5s 0.16s ease both;
+        }
+
+        .hero-actions {
+            margin-top: 2.5rem;
+            display: flex;
+            gap: 0.9rem;
+            align-items: center;
+            animation: fadeUp 0.5s 0.22s ease both;
+        }
+
+        .btn-primary {
+            background: var(--ink);
+            color: var(--white);
+            font-family: 'Instrument Sans', sans-serif;
+            font-weight: 600;
+            font-size: 0.95rem;
+            padding: 0.85rem 2rem;
+            border-radius: 100px;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: background 0.15s, transform 0.12s;
+        }
+
+        .btn-primary:hover { background: var(--accent); transform: translateY(-1px); }
+
+        .btn-secondary {
+            background: var(--white);
+            color: var(--ink);
+            font-family: 'Instrument Sans', sans-serif;
+            font-weight: 500;
+            font-size: 0.92rem;
+            padding: 0.85rem 1.8rem;
+            border-radius: 100px;
+            border: 1px solid var(--border);
+            text-decoration: none;
+            transition: background 0.15s;
+        }
+
+        .btn-secondary:hover { background: var(--bg2); }
+
+        .hero-proof {
+            margin-top: 3rem;
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            animation: fadeUp 0.5s 0.3s ease both;
+        }
+
+        .avatar-stack { display: flex; }
+
+        .avatar {
+            width: 34px; height: 34px;
+            border-radius: 50%;
+            border: 2px solid var(--bg);
+            margin-left: -8px;
+            font-size: 0.68rem;
+            font-weight: 600;
+            display: flex; align-items: center; justify-content: center;
+            color: #fff;
+        }
+
+        .avatar:first-child { margin-left: 0; }
+        .av1 { background: #4e7c59; }
+        .av2 { background: #7c5c4e; }
+        .av3 { background: #4e5c7c; }
+        .av4 { background: #7c4e6a; }
+
+        .proof-text { font-size: 0.82rem; color: var(--ink2); line-height: 1.5; }
+        .proof-text strong { color: var(--ink); font-weight: 600; }
+
+        /* ─── HERO VISUAL ─── */
+        .hero-visual { animation: fadeUp 0.7s 0.2s ease both; position: relative; }
+
+        .dashboard-card {
+            background: var(--white);
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            padding: 1.8rem;
+            box-shadow: 0 4px 6px rgba(26,25,22,0.04), 0 16px 40px rgba(26,25,22,0.08);
+        }
+
+        .dc-header {
+            display: flex; align-items: center; justify-content: space-between;
+            margin-bottom: 1.4rem;
+        }
+
+        .dc-title {
+            font-family: 'Bricolage Grotesque', sans-serif;
+            font-size: 0.8rem; font-weight: 700;
+            letter-spacing: 0.05em; text-transform: uppercase;
+            color: var(--ink3);
+        }
+
+        .live-chip {
+            display: flex; align-items: center; gap: 5px;
+            background: var(--accent-lt); border: 1px solid var(--accent-md);
+            color: var(--accent); font-size: 0.72rem; font-weight: 600;
+            padding: 3px 10px; border-radius: 100px;
+        }
+
+        .ld { width: 5px; height: 5px; border-radius: 50%; background: var(--accent); animation: pulse 1.5s infinite; }
+
+        .cal-ring-row { display: flex; align-items: center; gap: 1.5rem; padding: 0.5rem 0 1.2rem; }
+
+        .ring-wrap { position: relative; width: 90px; height: 90px; flex-shrink: 0; }
+        .ring-wrap svg { transform: rotate(-90deg); }
+        .ring-track { fill: none; stroke: var(--bg2); stroke-width: 8; }
+        .ring-fill { fill: none; stroke: var(--accent); stroke-width: 8; stroke-linecap: round; stroke-dasharray: 220; stroke-dashoffset: 70; }
+
+        .ring-center {
+            position: absolute; inset: 0;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+        }
+
+        .ring-pct {
+            font-family: 'Bricolage Grotesque', sans-serif;
+            font-size: 1.35rem; font-weight: 800; color: var(--ink); letter-spacing: -0.03em; line-height: 1;
+        }
+
+        .ring-sub { font-size: 0.6rem; color: var(--ink3); margin-top: 2px; }
+
+        .cal-big {
+            font-family: 'Bricolage Grotesque', sans-serif;
+            font-size: 2rem; font-weight: 800; color: var(--ink); letter-spacing: -0.04em; line-height: 1;
+        }
+
+        .cal-label { font-size: 0.78rem; color: var(--ink3); margin-top: 4px; }
+        .cal-goal { font-size: 0.78rem; color: var(--ink2); margin-top: 6px; }
+        .cal-goal span { color: var(--accent); font-weight: 600; }
+
+        .mini-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-bottom: 1.2rem; }
+
+        .mini-tile {
+            background: var(--bg); border: 1px solid var(--border2);
+            border-radius: 12px; padding: 0.8rem 0.7rem; text-align: center;
+        }
+
+        .mt-val { font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 1.05rem; color: var(--ink); }
+        .mt-lbl { font-size: 0.65rem; color: var(--ink3); margin-top: 2px; font-weight: 500; }
+
+        .workout-row { display: flex; flex-direction: column; gap: 6px; }
+
+        .wrow {
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 0.65rem 0.75rem; border-radius: 10px;
+            background: var(--bg); border: 1px solid var(--border2);
+            transition: background 0.15s;
+        }
+
+        .wrow:hover { background: var(--bg2); }
+        .wrow-left { display: flex; align-items: center; gap: 8px; }
+        .wrow-icon { font-size: 0.9rem; width: 28px; text-align: center; }
+        .wrow-name { font-size: 0.82rem; color: var(--ink); font-weight: 500; }
+        .wrow-detail { color: var(--ink3); font-size: 0.72rem; margin-top: 1px; }
+        .wrow-kcal { font-size: 0.78rem; font-weight: 600; color: var(--orange); }
+
+        .float-badge {
+            position: absolute; top: -18px; right: -18px;
+            background: var(--white); border: 1px solid var(--border);
+            border-radius: 14px; padding: 0.7rem 1rem;
+            display: flex; align-items: center; gap: 8px;
+            box-shadow: 0 8px 24px rgba(26,25,22,0.1);
+            animation: floatY 4s ease-in-out infinite;
+        }
+
+        @keyframes floatY { 0%,100% { transform:translateY(0); } 50% { transform:translateY(-7px); } }
+
+        .fb-icon { width: 32px; height: 32px; background: var(--accent-lt); border-radius: 9px; display: flex; align-items: center; justify-content: center; font-size: 0.9rem; }
+        .fb-val { font-family: 'Bricolage Grotesque', sans-serif; font-size: 0.9rem; font-weight: 700; color: var(--ink); }
+        .fb-lbl { font-size: 0.68rem; color: var(--ink3); }
+
+        /* ─── TICKER ─── */
+        .ticker { background: var(--ink); padding: 0.8rem 0; overflow: hidden; }
+
+        .ticker-track {
+            display: flex; gap: 2.5rem; white-space: nowrap;
+            animation: slide 22s linear infinite;
+        }
+
+        @keyframes slide { from { transform:translateX(0); } to { transform:translateX(-50%); } }
+
+        .t-item {
+            font-family: 'Bricolage Grotesque', sans-serif;
+            font-size: 0.8rem; font-weight: 700; letter-spacing: 0.07em; text-transform: uppercase;
+            color: rgba(242,240,235,0.7);
+            display: flex; align-items: center; gap: 0.7rem;
+        }
+
+        .t-dot { color: var(--accent); }
+
+        /* ─── SECTION COMMON ─── */
+        section { padding: 5.5rem 3.5rem; position: relative; }
+
+        .label-tag {
+            display: inline-flex; align-items: center; gap: 6px;
+            font-size: 0.75rem; font-weight: 600; letter-spacing: 0.07em; text-transform: uppercase;
+            color: var(--accent); margin-bottom: 0.9rem;
+        }
+
+        .label-tag::before { content: ''; width: 18px; height: 2px; background: var(--accent); border-radius: 1px; display: inline-block; }
+
+        .section-h {
+            font-family: 'Bricolage Grotesque', sans-serif;
+            font-size: clamp(2rem, 3.5vw, 3rem); font-weight: 800;
+            letter-spacing: -0.035em; color: var(--ink); line-height: 1.08; max-width: 600px;
+        }
+
+        /* ─── FEATURES ─── */
+        .features-section { background: var(--bg2); }
+
+        .feat-grid {
+            display: grid; grid-template-columns: repeat(3, 1fr);
+            gap: 1.5px; background: var(--border);
+            border-radius: 20px; overflow: hidden; margin-top: 3.5rem;
+            border: 1px solid var(--border);
+        }
+
+        .feat-cell { background: var(--white); padding: 2.2rem; transition: background 0.2s; }
+        .feat-cell:hover { background: var(--bg); }
+        .feat-cell.wide { grid-column: span 2; }
+
+        .feat-ico {
+            width: 44px; height: 44px;
+            background: var(--accent-lt); border: 1px solid var(--accent-md);
+            border-radius: 12px; display: flex; align-items: center; justify-content: center;
+            font-size: 1.2rem; margin-bottom: 1.4rem;
+        }
+
+        .feat-title {
+            font-family: 'Bricolage Grotesque', sans-serif;
+            font-size: 1.05rem; font-weight: 700; color: var(--ink);
+            margin-bottom: 0.5rem; letter-spacing: -0.02em;
+        }
+
+        .feat-desc { font-size: 0.87rem; color: var(--ink2); line-height: 1.65; }
+
+        /* ─── HOW IT WORKS ─── */
+        .how-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 5rem; align-items: center; margin-top: 1rem; }
+
+        .step-list { display: flex; flex-direction: column; gap: 1.5rem; margin-top: 2.5rem; }
+
+        .step { display: flex; gap: 1.2rem; align-items: flex-start; }
+
+        .step-num {
+            font-family: 'Bricolage Grotesque', sans-serif;
+            font-size: 0.75rem; font-weight: 800; color: var(--accent);
+            background: var(--accent-lt); border: 1px solid var(--accent-md);
+            width: 28px; height: 28px; border-radius: 8px;
+            display: flex; align-items: center; justify-content: center;
+            flex-shrink: 0; margin-top: 2px;
+        }
+
+        .step-ttl { font-weight: 600; font-size: 0.95rem; color: var(--ink); margin-bottom: 3px; }
+        .step-txt { font-size: 0.84rem; color: var(--ink2); line-height: 1.6; }
+
+        .workout-card {
+            background: var(--white); border: 1px solid var(--border);
+            border-radius: 20px; overflow: hidden;
+            box-shadow: 0 2px 4px rgba(26,25,22,0.04), 0 12px 32px rgba(26,25,22,0.07);
+        }
+
+        .wc-head {
+            padding: 1.2rem 1.5rem; border-bottom: 1px solid var(--border);
+            display: flex; align-items: center; justify-content: space-between;
+        }
+
+        .wc-title { font-family: 'Bricolage Grotesque', sans-serif; font-size: 0.9rem; font-weight: 700; color: var(--ink); letter-spacing: -0.02em; }
+        .wc-date { font-size: 0.75rem; color: var(--ink3); }
+        .wc-list { padding: 0.8rem; display: flex; flex-direction: column; gap: 4px; }
+
+        .wi {
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 0.7rem 0.8rem; border-radius: 10px; transition: background 0.15s; cursor: default;
+        }
+
+        .wi:hover { background: var(--bg); }
+        .wi-left { display: flex; align-items: center; gap: 10px; }
+        .wi-icon { font-size: 1rem; width: 32px; height: 32px; background: var(--bg2); border-radius: 8px; display: flex; align-items: center; justify-content: center; }
+        .wi-name { font-size: 0.88rem; font-weight: 500; color: var(--ink); }
+        .wi-meta { font-size: 0.72rem; color: var(--ink3); margin-top: 1px; }
+        .wi-kcal { font-size: 0.8rem; font-weight: 600; color: var(--orange); background: #fef0e8; padding: 3px 9px; border-radius: 100px; }
+
+        /* ─── CTA ─── */
+        .cta-wrap {
+            margin: 0 3.5rem 5rem;
+            background: var(--ink); border-radius: 28px;
+            padding: 5rem; text-align: center; position: relative; overflow: hidden;
+        }
+
+        .cta-wrap::before {
+            content: ''; position: absolute; top: -80px; left: 50%; transform: translateX(-50%);
+            width: 400px; height: 300px;
+            background: radial-gradient(ellipse, rgba(47,107,62,0.5) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .cta-wrap .label-tag { color: #6fcf7a; }
+        .cta-wrap .label-tag::before { background: #6fcf7a; }
+
+        .cta-wrap h2 {
+            font-family: 'Bricolage Grotesque', sans-serif;
+            font-size: clamp(2rem, 4vw, 3.2rem); font-weight: 800;
+            letter-spacing: -0.04em; color: var(--white); margin-bottom: 0.9rem;
+        }
+
+        .cta-wrap p { color: rgba(255,255,255,0.5); font-size: 0.95rem; margin-bottom: 2.5rem; }
+
+        .btn-white {
+            background: var(--white); color: var(--ink);
+            font-family: 'Instrument Sans', sans-serif; font-weight: 600; font-size: 0.95rem;
+            padding: 0.9rem 2.2rem; border-radius: 100px; text-decoration: none;
+            display: inline-flex; align-items: center; gap: 8px;
+            transition: background 0.15s, transform 0.12s;
+        }
+
+        .btn-white:hover { background: var(--bg2); transform: translateY(-2px); }
+
+        /* ─── FOOTER ─── */
+        footer {
+            border-top: 1px solid var(--border); padding: 2rem 3.5rem;
+            display: flex; align-items: center; justify-content: space-between;
+            background: var(--bg);
+        }
+
+        .foot-left { font-size: 0.82rem; color: var(--ink3); }
+        .foot-links { display: flex; gap: 1.8rem; }
+        .foot-links a { font-size: 0.82rem; color: var(--ink3); text-decoration: none; transition: color 0.15s; }
+        .foot-links a:hover { color: var(--ink); }
+
+        @keyframes fadeUp { from { opacity:0; transform:translateY(20px); } to { opacity:1; transform:translateY(0); } }
+
+        @media (max-width: 900px) {
+            nav { padding: 0 1.5rem; }
+            .hero { grid-template-columns: 1fr; padding: 6.5rem 1.5rem 3rem; }
+            .hero-visual { display: none; }
+            section { padding: 4rem 1.5rem; }
+            .feat-grid { grid-template-columns: 1fr; }
+            .feat-cell.wide { grid-column: span 1; }
+            .how-grid { grid-template-columns: 1fr; gap: 2.5rem; }
+            .cta-wrap { margin: 0 1.5rem 3.5rem; padding: 3rem 2rem; }
+            footer { flex-direction: column; gap: 1.2rem; text-align: center; padding: 1.5rem; }
+        }
+		workout-scroll-section{
+		  padding:5rem 0;
+		  border-bottom:1px solid var(--border);
+		  overflow:hidden;
+		  background:var(--bg);
+		}
+		.wss-header{padding:0 4rem;margin-bottom:3rem;display:flex;justify-content:space-between;align-items:flex-end}
+		.wss-right{font-size:0.85rem;color:var(--ink2);max-width:260px;line-height:1.7;font-weight:300;text-align:right}
+		.section-tag{font-size:0.7rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--ink3);margin-bottom:0.9rem;display:flex;align-items:center;gap:10px}
+		.section-tag::before{content:'';width:20px;height:1px;background:var(--ink3)}
+		.section-h{font-family:'Playfair Display',serif;font-size:clamp(1.9rem,2.8vw,2.6rem);font-weight:400;letter-spacing:-0.03em;color:var(--ink);line-height:1.05}
+		.section-h em{font-style:italic;color:var(--ink3)}
+
+		/* strip */
+		.strip-wrap{position:relative}
+		.strip-wrap::before,.strip-wrap::after{
+		  content:'';position:absolute;top:0;bottom:0;width:120px;z-index:10;pointer-events:none;
+		}
+		.strip-wrap::before{left:0;background:linear-gradient(to right,var(--bg),transparent)}
+		.strip-wrap::after{right:0;background:linear-gradient(to left,var(--bg),transparent)}
+
+		.strip{display:flex;gap:16px;padding:8px 0;width:max-content}
+		.strip.row1{animation:scrollL 40s linear infinite}
+		.strip.row2{animation:scrollR 45s linear infinite;margin-top:16px}
+		.strip:hover{animation-play-state:paused}
+		@keyframes scrollL{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+		@keyframes scrollR{from{transform:translateX(-50%)}to{transform:translateX(0)}}
+
+		/* workout card */
+		.wcard{
+		  width:200px;height:220px;flex-shrink:0;
+		  background:var(--white);border:1px solid var(--border);border-radius:14px;
+		  overflow:hidden;cursor:pointer;position:relative;
+		  transition:border-color 0.25s,transform 0.25s;
+		}
+		.wcard:hover{border-color:var(--sage-md);transform:translateY(-4px)}
+		.wcard-visual{
+		  height:140px;
+		  display:flex;align-items:center;justify-content:center;
+		  position:relative;overflow:hidden;
+		  background:var(--bg);
+		  border-bottom:1px solid var(--border);
+		}
+		.wcard-info{padding:0.75rem 0.9rem}
+		.wcard-name{font-size:0.78rem;font-weight:500;color:var(--ink);letter-spacing:-0.01em}
+		.wcard-meta{display:flex;align-items:center;gap:6px;margin-top:4px}
+		.wcard-kcal{font-size:0.65rem;color:var(--sage);font-weight:500}
+		.wcard-dot{width:3px;height:3px;border-radius:50%;background:var(--ink3)}
+		.wcard-dur{font-size:0.65rem;color:var(--ink3)}
+		.wcard-cat{
+		  position:absolute;top:8px;right:8px;
+		  font-size:0.58rem;letter-spacing:0.08em;text-transform:uppercase;
+		  color:var(--ink2);background:var(--white);border:1px solid var(--border);
+		  padding:2px 7px;border-radius:100px;
+		}
+
+		/* ── SVG figure animations ── */
+		.fig{width:80px;height:80px;position:relative}
+
+		/* Running figure */
+		@keyframes run-body{0%,100%{transform:translateY(0) rotate(-2deg)}50%{transform:translateY(-4px) rotate(2deg)}}
+		@keyframes run-arm-f{0%,100%{transform:rotate(-30deg)}50%{transform:rotate(30deg)}}
+		@keyframes run-arm-b{0%,100%{transform:rotate(30deg)}50%{transform:rotate(-30deg)}}
+		@keyframes run-leg-f{0%,100%{transform:rotate(-40deg)}50%{transform:rotate(40deg)}}
+		@keyframes run-leg-b{0%,100%{transform:rotate(40deg)}50%{transform:rotate(-40deg)}}
+		@keyframes bounce-shadow{0%,100%{transform:scaleX(1);opacity:0.15}50%{transform:scaleX(0.7);opacity:0.08}}
+
+		/* Cycling figure */
+		@keyframes pedal-f{0%{transform:rotate(0deg)}100%{transform:rotate(360deg)}}
+		@keyframes wheel-spin{0%{transform:rotate(0deg)}100%{transform:rotate(360deg)}}
+
+		/* Push-up */
+		@keyframes pushup{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+
+		/* Yoga */
+		@keyframes breathe{0%,100%{transform:scaleY(1)}50%{transform:scaleY(1.04)}}
+
+		/* Jump rope */
+		@keyframes jump{0%,100%{transform:translateY(0)}45%,55%{transform:translateY(-10px)}}
+		@keyframes rope{0%{transform:rotate(0deg)}100%{transform:rotate(360deg)}}
+
+		/* Squat */
+		@keyframes squat{0%,100%{transform:translateY(0) scaleY(1)}50%{transform:translateY(8px) scaleY(0.88)}}
+
+		/* Stretch */
+		@keyframes stretch-arm{0%,100%{transform:rotate(0deg)}50%{transform:rotate(30deg)}}
+
+		/* Plank */
+		@keyframes plank-pulse{0%,100%{transform:scaleX(1)}50%{transform:scaleX(1.01)}}
+
+		/* Dumbbell curl */
+		@keyframes curl{0%,100%{transform:rotate(0deg)}50%{transform:rotate(-70deg)}}
+
+		/* Burpee */
+		@keyframes burpee{0%,25%{transform:translateY(0) scaleY(1)}50%{transform:translateY(-14px) scaleY(1)}75%,100%{transform:translateY(0) scaleY(0.85)}}
+
+		/* Swim */
+		@keyframes swim-arm{0%,100%{transform:rotate(-20deg)}50%{transform:rotate(160deg)}}
+		@keyframes swim-body{0%,100%{transform:translateY(0)}50%{transform:translateY(-3px)}}
+
+		/* Kettlebell */
+		@keyframes kb-swing{0%,100%{transform:rotate(0deg)}50%{transform:rotate(-45deg)}}
+    </style>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<div th:replace="fragments/navbar :: navbar('home')"></div><!-- HERO -->
+<div class="hero">
+    <div>
+        <div class="hero-eyebrow">
+            <span class="pulse-dot"></span>
+            Trusted by 50,000+ athletes
+        </div>
+
+        <h1>Track Every Rep.<br><span class="highlight">Burn</span> Every Goal.</h1>
+
+        <p class="hero-desc">
+            Log workouts, monitor calories, and hit personal records — all inside one beautifully focused fitness dashboard.
+        </p>
+
+        <div class="hero-actions">
+            <a href="/auth/signup" class="btn-primary">
+                Start for free
+                <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M2.5 6.5h8M6.5 2.5l4 4-4 4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </a>
+            <a href="#features" class="btn-secondary">Explore features</a>
+        </div>
+
+        <div class="hero-proof">
+            <div class="avatar-stack">
+                <div class="avatar av1">MK</div>
+                <div class="avatar av2">RJ</div>
+                <div class="avatar av3">SL</div>
+                <div class="avatar av4">AP</div>
+            </div>
+            <div class="proof-text">
+                <strong>50,000+</strong> athletes already tracking<br>
+                ★★★★★ <span style="color:var(--ink3)">4.9 avg. rating</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="hero-visual">
+        <div class="float-badge">
+            <div class="fb-icon">🔥</div>
+            <div>
+                <div class="fb-val">+340 kcal</div>
+                <div class="fb-lbl">Session complete</div>
+            </div>
+        </div>
+
+        <div class="dashboard-card">
+            <div class="dc-header">
+                <span class="dc-title">Today's Progress</span>
+                <span class="live-chip"><span class="ld"></span>Live</span>
+            </div>
+
+            <div class="cal-ring-row">
+                <div class="ring-wrap">
+                    <svg width="90" height="90" viewBox="0 0 90 90">
+                        <circle class="ring-track" cx="45" cy="45" r="35"/>
+                        <circle class="ring-fill" cx="45" cy="45" r="35"/>
+                    </svg>
+                    <div class="ring-center">
+                        <div class="ring-pct">68%</div>
+                        <div class="ring-sub">of goal</div>
+                    </div>
+                </div>
+                <div>
+                    <div class="cal-big">1,840</div>
+                    <div class="cal-label">kcal burned today</div>
+                    <div class="cal-goal">Goal: <span>2,700 kcal</span></div>
+                </div>
+            </div>
+
+            <div class="mini-row">
+                <div class="mini-tile"><div class="mt-val">6.2km</div><div class="mt-lbl">Distance</div></div>
+                <div class="mini-tile"><div class="mt-val">48m</div><div class="mt-lbl">Active</div></div>
+                <div class="mini-tile"><div class="mt-val">12k</div><div class="mt-lbl">Steps</div></div>
+            </div>
+
+            <div class="workout-row">
+                <div class="wrow">
+                    <div class="wrow-left">
+                        <span class="wrow-icon">🏃</span>
+                        <div><div class="wrow-name">Morning Run</div><div class="wrow-detail">6.2 km · 48 min</div></div>
+                    </div>
+                    <span class="wrow-kcal">340 kcal</span>
+                </div>
+                <div class="wrow">
+                    <div class="wrow-left">
+                        <span class="wrow-icon">💪</span>
+                        <div><div class="wrow-name">Strength Training</div><div class="wrow-detail">4 sets · 35 min</div></div>
+                    </div>
+                    <span class="wrow-kcal">210 kcal</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- TICKER -->
+<div class="ticker">
+    <div class="ticker-track">
+        <span class="t-item">Workout Logging <span class="t-dot">●</span></span>
+        <span class="t-item">Calorie Tracking <span class="t-dot">●</span></span>
+        <span class="t-item">Goal Setting <span class="t-dot">●</span></span>
+        <span class="t-item">Progress Charts <span class="t-dot">●</span></span>
+        <span class="t-item">AI Coaching <span class="t-dot">●</span></span>
+        <span class="t-item">Body Metrics <span class="t-dot">●</span></span>
+        <span class="t-item">Custom Routines <span class="t-dot">●</span></span>
+        <span class="t-item">Streak Tracking <span class="t-dot">●</span></span>
+        <span class="t-item">Workout Logging <span class="t-dot">●</span></span>
+        <span class="t-item">Calorie Tracking <span class="t-dot">●</span></span>
+        <span class="t-item">Goal Setting <span class="t-dot">●</span></span>
+        <span class="t-item">Progress Charts <span class="t-dot">●</span></span>
+        <span class="t-item">AI Coaching <span class="t-dot">●</span></span>
+        <span class="t-item">Body Metrics <span class="t-dot">●</span></span>
+        <span class="t-item">Custom Routines <span class="t-dot">●</span></span>
+        <span class="t-item">Streak Tracking <span class="t-dot">●</span></span>
+    </div>
+</div>
+<div id="workouts" class="workout-scroll-section">
+  <div class="wss-header">
+    <div>
+      <div class="section-tag">200+ exercises</div>
+      <h2 class="section-h">Every workout,<br><em>beautifully tracked.</em></h2>
+    </div>
+    <p class="wss-right">From morning runs to late-night lifts — every exercise logged, every calorie counted, every PR celebrated.</p>
+  </div>
+
+  <div class="strip-wrap" id="strips"></div>
+</div>
+
+<!-- FEATURES -->
+<section id="features" class="features-section">
+    <span class="label-tag">What we offer</span>
+    <h2 class="section-h">Everything you need to level up</h2>
+
+    <div class="feat-grid">
+        <div class="feat-cell wide">
+            <div class="feat-ico">🏋️</div>
+            <div class="feat-title">Intelligent Workout Logging</div>
+            <div class="feat-desc">Log every exercise, set, and rep in seconds. FitTrack learns your patterns and surfaces insights to help you train smarter — not just harder. Supports strength, cardio, HIIT, yoga, and more.</div>
+        </div>
+        <div class="feat-cell">
+            <div class="feat-ico">🔥</div>
+            <div class="feat-title">Calorie Intelligence</div>
+            <div class="feat-desc">Track calories burned and consumed with precision. Understand your energy balance in real time every day.</div>
+        </div>
+        <div class="feat-cell">
+            <div class="feat-ico">🎯</div>
+            <div class="feat-title">Goal Mapping</div>
+            <div class="feat-desc">Set daily, weekly, and long-term targets. Visual rings and streaks keep you locked in and motivated.</div>
+        </div>
+        <div class="feat-cell">
+            <div class="feat-ico">📈</div>
+            <div class="feat-title">Progress Analytics</div>
+            <div class="feat-desc">Deep charts on your performance over time. Spot plateaus early and celebrate every personal record.</div>
+        </div>
+        <div class="feat-cell wide">
+            <div class="feat-ico">🤖</div>
+            <div class="feat-title">AI-Powered Coaching</div>
+            <div class="feat-desc">Get personalized workout plans generated from your history, goals, and available equipment. Your AI coach adapts every week as you improve — like having a trainer who never forgets a session.</div>
+        </div>
+    </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section id="workouts">
+    <div class="how-grid">
+        <div>
+            <span class="label-tag">How it works</span>
+            <h2 class="section-h">Simple to start. Powerful to grow with.</h2>
+            <div class="step-list">
+                <div class="step">
+                    <div class="step-num">1</div>
+                    <div><div class="step-ttl">Create your profile</div><div class="step-txt">Set your fitness level, goals, and schedule. Takes under 2 minutes.</div></div>
+                </div>
+                <div class="step">
+                    <div class="step-num">2</div>
+                    <div><div class="step-ttl">Log each workout</div><div class="step-txt">Add exercises as you go or use quick-log presets. Track sets, reps, weight, and duration effortlessly.</div></div>
+                </div>
+                <div class="step">
+                    <div class="step-num">3</div>
+                    <div><div class="step-ttl">Watch your progress</div><div class="step-txt">Your dashboard updates live. Charts, streaks, and milestones keep you motivated to keep going.</div></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="workout-card">
+            <div class="wc-head">
+                <span class="wc-title">Today's Workout</span>
+                <span class="wc-date">Sunday, Apr 12</span>
+            </div>
+            <div class="wc-list">
+                <div class="wi">
+                    <div class="wi-left"><div class="wi-icon">🏃</div><div><div class="wi-name">Morning Run</div><div class="wi-meta">6.2 km · 48 min</div></div></div>
+                    <span class="wi-kcal">340 kcal</span>
+                </div>
+                <div class="wi">
+                    <div class="wi-left"><div class="wi-icon">💪</div><div><div class="wi-name">Bench Press</div><div class="wi-meta">4 sets · 8 reps · 80 kg</div></div></div>
+                    <span class="wi-kcal">210 kcal</span>
+                </div>
+                <div class="wi">
+                    <div class="wi-left"><div class="wi-icon">🧘</div><div><div class="wi-name">Core & Stretch</div><div class="wi-meta">3 sets · 20 min</div></div></div>
+                    <span class="wi-kcal">95 kcal</span>
+                </div>
+                <div class="wi">
+                    <div class="wi-left"><div class="wi-icon">🚴</div><div><div class="wi-name">Cycling</div><div class="wi-meta">15.8 km · 35 min</div></div></div>
+                    <span class="wi-kcal">490 kcal</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CTA -->
+<div style="padding: 5rem 0 2rem;">
+    <div class="cta-wrap">
+        <span class="label-tag">Ready?</span>
+        <h2>Start your transformation<br>today — it's free.</h2>
+        <p>No credit card. No commitments. Just results.</p>
+        <a href="/auth/signup" class="btn-white">
+            Create free account
+            <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M2.5 6.5h8M6.5 2.5l4 4-4 4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </a>
+    </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+    <div class="foot-left">© 2026 FitTrack · Built by Mawa 💪</div>
+    <div class="foot-links">
+        <a href="#">Privacy</a>
+        <a href="#">Terms</a>
+        <a href="#">Contact</a>
+    </div>
+</footer>
+<script>
+// ── Workout data ──
+const workouts = [
+  { name:'Morning Run', cat:'Cardio', kcal:340, dur:'45 min', color:'#eef3ee', svg:'run' },
+  { name:'Bench Press', cat:'Strength', kcal:210, dur:'35 min', color:'#f3f0ee', svg:'bench' },
+  { name:'Yoga Flow', cat:'Flexibility', kcal:120, dur:'30 min', color:'#eef0f3', svg:'yoga' },
+  { name:'Jump Rope', cat:'Cardio', kcal:400, dur:'20 min', color:'#f3f0ee', svg:'jumprope' },
+  { name:'Squats', cat:'Strength', kcal:180, dur:'25 min', color:'#eef3ee', svg:'squat' },
+  { name:'Cycling', cat:'Cardio', kcal:490, dur:'40 min', color:'#eef0f3', svg:'cycle' },
+  { name:'Push-ups', cat:'Strength', kcal:150, dur:'15 min', color:'#f3f0ee', svg:'pushup' },
+  { name:'Plank Hold', cat:'Core', kcal:80, dur:'10 min', color:'#eef3ee', svg:'plank' },
+  { name:'Kettlebell', cat:'Strength', kcal:280, dur:'30 min', color:'#f3eef3', svg:'kettlebell' },
+  { name:'Swimming', cat:'Cardio', kcal:520, dur:'45 min', color:'#eef0f3', svg:'swim' },
+  { name:'Burpees', cat:'HIIT', kcal:350, dur:'20 min', color:'#f3f0ee', svg:'burpee' },
+  { name:'Deadlift', cat:'Strength', kcal:240, dur:'30 min', color:'#eef3ee', svg:'deadlift' },
+  { name:'Box Jumps', cat:'Plyometric', kcal:300, dur:'20 min', color:'#f3eef3', svg:'boxjump' },
+  { name:'Lat Pulldown', cat:'Strength', kcal:190, dur:'25 min', color:'#eef3ee', svg:'lat' },
+  { name:'Stretching', cat:'Recovery', kcal:60, dur:'20 min', color:'#eef0f3', svg:'stretch' },
+  { name:'HIIT Sprint', cat:'HIIT', kcal:420, dur:'25 min', color:'#f3f0ee', svg:'hiit' },
+];
+
+// ── SVG figures ──
+function getSVG(type) {
+  const c = '#141412', c2 = '#3d6b4a', c3 = '#b0aea8';
+  const svgs = {
+    run: `<svg width="90" height="90" viewBox="0 0 90 90" fill="none">
+      <g style="animation:run-body 0.5s ease-in-out infinite;transform-origin:45px 45px">
+        <circle cx="45" cy="20" r="8" fill="${c}"/>
+        <!-- torso -->
+        <rect x="41" y="28" width="8" height="20" rx="4" fill="${c}" style="animation:run-body 0.5s ease-in-out infinite;transform-origin:45px 38px"/>
+        <!-- arm front -->
+        <line x1="45" y1="32" x2="58" y2="44" stroke="${c2}" stroke-width="4" stroke-linecap="round" style="animation:run-arm-f 0.5s ease-in-out infinite;transform-origin:45px 32px"/>
+        <!-- arm back -->
+        <line x1="45" y1="32" x2="32" y2="44" stroke="${c}" stroke-width="4" stroke-linecap="round" style="animation:run-arm-b 0.5s ease-in-out infinite;transform-origin:45px 32px"/>
+        <!-- leg front -->
+        <line x1="45" y1="48" x2="60" y2="68" stroke="${c2}" stroke-width="4.5" stroke-linecap="round" style="animation:run-leg-f 0.5s ease-in-out infinite;transform-origin:45px 48px"/>
+        <!-- leg back -->
+        <line x1="45" y1="48" x2="30" y2="68" stroke="${c}" stroke-width="4.5" stroke-linecap="round" style="animation:run-leg-b 0.5s ease-in-out infinite;transform-origin:45px 48px"/>
+      </g>
+      <!-- shadow -->
+      <ellipse cx="45" cy="76" rx="12" ry="3" fill="${c3}" style="animation:bounce-shadow 0.5s ease-in-out infinite;transform-origin:45px 76px"/>
+    </svg>`,
+
+    cycle: `<svg width="90" height="90" viewBox="0 0 90 90" fill="none">
+      <!-- bike frame -->
+      <circle cx="25" cy="62" r="14" stroke="${c}" stroke-width="3" fill="none"/>
+      <circle cx="65" cy="62" r="14" stroke="${c}" stroke-width="3" fill="none"/>
+      <!-- wheel spokes spin -->
+      <g style="animation:wheel-spin 0.6s linear infinite;transform-origin:25px 62px">
+        <line x1="25" y1="48" x2="25" y2="76" stroke="${c3}" stroke-width="1.5"/>
+        <line x1="11" y1="62" x2="39" y2="62" stroke="${c3}" stroke-width="1.5"/>
+      </g>
+      <g style="animation:wheel-spin 0.6s linear infinite;transform-origin:65px 62px">
+        <line x1="65" y1="48" x2="65" y2="76" stroke="${c3}" stroke-width="1.5"/>
+        <line x1="51" y1="62" x2="79" y2="62" stroke="${c3}" stroke-width="1.5"/>
+      </g>
+      <!-- frame -->
+      <polyline points="25,62 45,35 65,62" stroke="${c}" stroke-width="3" stroke-linejoin="round" fill="none"/>
+      <line x1="45" y1="35" x2="45" y2="20" stroke="${c}" stroke-width="3" stroke-linecap="round"/>
+      <line x1="38" y1="20" x2="52" y2="20" stroke="${c}" stroke-width="3" stroke-linecap="round"/>
+      <!-- rider -->
+      <circle cx="45" cy="14" r="6" fill="${c}"/>
+      <line x1="45" y1="20" x2="45" y2="35" stroke="${c}" stroke-width="3.5" stroke-linecap="round"/>
+      <!-- pedal -->
+      <g style="animation:pedal-f 0.6s linear infinite;transform-origin:52px 50px">
+        <circle cx="52" cy="50" r="3" fill="${c2}"/>
+        <line x1="52" y1="50" x2="59" y2="55" stroke="${c2}" stroke-width="2.5" stroke-linecap="round"/>
+      </g>
+    </svg>`,
+
+    yoga: `<svg width="90" height="90" viewBox="0 0 90 90" fill="none">
+      <g style="animation:breathe 2s ease-in-out infinite;transform-origin:45px 45px">
+        <circle cx="45" cy="16" r="7" fill="${c}"/>
+        <!-- seated body -->
+        <path d="M45 23 Q45 38 45 45" stroke="${c}" stroke-width="4" stroke-linecap="round"/>
+        <!-- legs crossed -->
+        <path d="M45 45 Q32 52 22 58" stroke="${c}" stroke-width="4" stroke-linecap="round"/>
+        <path d="M45 45 Q58 52 68 58" stroke="${c}" stroke-width="4" stroke-linecap="round"/>
+        <path d="M22 58 Q35 62 45 57" stroke="${c}" stroke-width="3.5" stroke-linecap="round"/>
+        <path d="M68 58 Q55 62 45 57" stroke="${c}" stroke-width="3.5" stroke-linecap="round"/>
+        <!-- arms raised -->
+        <path d="M45 30 Q32 22 24 16" stroke="${c2}" stroke-width="4" stroke-linecap="round"/>
+        <path d="M45 30 Q58 22 66 16" stroke="${c2}" stroke-width="4" stroke-linecap="round"/>
+        <!-- hands -->
+        <circle cx="24" cy="16" r="3" fill="${c2}"/>
+        <circle cx="66" cy="16" r="3" fill="${c2}"/>
+      </g>
+    </svg>`,
+
+    pushup: `<svg width="90" height="90" viewBox="0 0 90 90" fill="none">
+      <g style="animation:pushup 0.8s ease-in-out infinite;transform-origin:45px 55px">
+        <circle cx="22" cy="42" r="6" fill="${c}"/>
+        <line x1="22" y1="48" x2="22" y2="62" stroke="${c}" stroke-width="4" stroke-linecap="round"/>
+        <line x1="22" y1="62" x2="10" y2="70" stroke="${c}" stroke-width="3.5" stroke-linecap="round"/>
+        <line x1="22" y1="62" x2="34" y2="70" stroke="${c}" stroke-width="3.5" stroke-linecap="round"/>
+        <line x1="22" y1="50" x2="65" y2="55" stroke="${c}" stroke-width="4.5" stroke-linecap="round"/>
+        <line x1="65" y1="55" x2="78" y2="70" stroke="${c}" stroke-width="3.5" stroke-linecap="round"/>
+        <line x1="65" y1="55" x2="76" y2="66" stroke="${c2}" stroke-width="4" stroke-linecap="round"/>
+        <line x1="22" y1="50" x2="14" y2="62" stroke="${c2}" stroke-width="4" stroke-linecap="round"/>
+      </g>
+    </svg>`,
+
+    squat: `<svg width="90" height="90" viewBox="0 0 90 90" fill="none">
+      <g style="animation:squat 1s ease-in-out infinite;transform-origin:45px 50px">
+        <circle cx="45" cy="18" r="7" fill="${c}"/>
+        <line x1="45" y1="25" x2="45" y2="45" stroke="${c}" stroke-width="4.5" stroke-linecap="round"/>
+        <line x1="45" y1="35" x2="32" y2="30" stroke="${c2}" stroke-width="4" stroke-linecap="round"/>
+        <line x1="45" y1="35" x2="58" y2="30" stroke="${c2}" stroke-width="4" stroke-linecap="round"/>
+        <line x1="32" y1="30" x2="22" y2="40" stroke="${c2}" stroke-width="3.5" stroke-linecap="round"/>
+        <line x1="58" y1="30" x2="68" y2="40" stroke="${c2}" stroke-width="3.5" stroke-linecap="round"/>
+        <line x1="45" y1="45" x2="30" y2="62" stroke="${c}" stroke-width="4.5" stroke-linecap="round"/>
+        <line x1="45" y1="45" x2="60" y2="62" stroke="${c}" stroke-width="4.5" stroke-linecap="round"/>
+        <line x1="30" y1="62" x2="22" y2="75" stroke="${c}" stroke-width="4" stroke-linecap="round"/>
+        <line x1="60" y1="62" x2="68" y2="75" stroke="${c}" stroke-width="4" stroke-linecap="round"/>
+      </g>
+    </svg>`,
+
+    plank: `<svg width="90" height="90" viewBox="0 0 90 90" fill="none">
+      <g style="animation:plank-pulse 1.5s ease-in-out infinite;transform-origin:45px 50px">
+        <circle cx="18" cy="40" r="6" fill="${c}"/>
+        <line x1="18" y1="46" x2="72" y2="52" stroke="${c}" stroke-width="5" stroke-linecap="round"/>
+        <line x1="18" y1="46" x2="10" y2="60" stroke="${c}" stroke-width="4" stroke-linecap="round"/>
+        <line x1="18" y1="46" x2="28" y2="60" stroke="${c}" stroke-width="4" stroke-linecap="round"/>
+        <line x1="72" y1="52" x2="64" y2="66" stroke="${c2}" stroke-width="4" stroke-linecap="round"/>
+        <line x1="72" y1="52" x2="80" y2="66" stroke="${c2}" stroke-width="4" stroke-linecap="round"/>
+      </g>
+    </svg>`,
+
+    jumprope: `<svg width="90" height="90" viewBox="0 0 90 90" fill="none">
+      <g style="animation:jump 0.6s ease-in-out infinite;transform-origin:45px 50px">
+        <circle cx="45" cy="20" r="7" fill="${c}"/>
+        <line x1="45" y1="27" x2="45" y2="48" stroke="${c}" stroke-width="4" stroke-linecap="round"/>
+        <line x1="45" y1="38" x2="34" y2="33" stroke="${c}" stroke-width="3.5" stroke-linecap="round"/>
+        <line x1="45" y1="38" x2="56" y2="33" stroke="${c}" stroke-width="3.5" stroke-linecap="round"/>
+        <line x1="45" y1="48" x2="34" y2="64" stroke="${c}" stroke-width="4" stroke-linecap="round"/>
+        <line x1="45" y1="48" x2="56" y2="64" stroke="${c}" stroke-width="4" stroke-linecap="round"/>
+        <line x1="34" y1="64" x2="26" y2="72" stroke="${c}" stroke-width="3.5" stroke-linecap="round"/>
+        <line x1="56" y1="64" x2="64" y2="72" stroke="${c}" stroke-width="3.5" stroke-linecap="round"/>
+      </g>
+      <g style="animation:rope 0.6s linear infinite;transform-origin:45px 60px">
+        <path d="M26 72 Q45 85 64 72" stroke="${c2}" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+        <path d="M34 33 Q45 20 56 33" stroke="${c2}" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+      </g>
+    </svg>`,
+
+    swim: `<svg width="90" height="90" viewBox="0 0 90 90" fill="none">
+      <g style="animation:swim-body 1s ease-in-out infinite;transform-origin:45px 50px">
+        <circle cx="20" cy="45" r="7" fill="${c}"/>
+        <line x1="20" y1="45" x2="72" y2="48" stroke="${c}" stroke-width="5" stroke-linecap="round"/>
+        <line x1="72" y1="48" x2="82" y2="42" stroke="${c}" stroke-width="4" stroke-linecap="round"/>
+        <line x1="72" y1="48" x2="82" y2="54" stroke="${c}" stroke-width="4" stroke-linecap="round"/>
+        <g style="animation:swim-arm 0.8s ease-in-out infinite;transform-origin:20px 45px">
+          <line x1="20" y1="45" x2="12" y2="34" stroke="${c2}" stroke-width="4" stroke-linecap="round"/>
+          <line x1="12" y1="34" x2="8" y2="42" stroke="${c2}" stroke-width="3.5" stroke-linecap="round"/>
+        </g>
+      </g>
+      <path d="M8 68 Q25 62 42 68 Q59 74 76 68" stroke="${c3}" stroke-width="2" fill="none" stroke-linecap="round"/>
+      <path d="M8 73 Q25 67 42 73 Q59 79 76 73" stroke="${c3}" stroke-width="1.5" fill="none" stroke-linecap="round" opacity="0.5"/>
+    </svg>`,
+
+    kettlebell: `<svg width="90" height="90" viewBox="0 0 90 90" fill="none">
+      <circle cx="45" cy="18" r="7" fill="${c}"/>
+      <g style="animation:kb-swing 0.8s ease-in-out infinite;transform-origin:45px 40px">
+        <line x1="45" y1="25" x2="45" y2="45" stroke="${c}" stroke-width="4.5" stroke-linecap="round"/>
+        <line x1="45" y1="40" x2="30" y2="35" stroke="${c}" stroke-width="4" stroke-linecap="round"/>
+        <line x1="45" y1="40" x2="60" y2="35" stroke="${c}" stroke-width="4" stroke-linecap="round"/>
+        <line x1="30" y1="35" x2="20" y2="48" stroke="${c2}" stroke-width="4" stroke-linecap="round"/>
+        <line x1="60" y1="35" x2="70" y2="48" stroke="${c2}" stroke-width="4" stroke-linecap="round"/>
+        <!-- kb -->
+        <circle cx="45" cy="60" r="12" fill="${c}" stroke="${c}" stroke-width="1"/>
+        <rect x="39" y="46" width="12" height="8" rx="3" fill="none" stroke="${c}" stroke-width="3"/>
+        <line x1="45" y1="48" x2="45" y2="52" stroke="${c3}" stroke-width="2"/>
+      </g>
+    </svg>`,
+
+    burpee: `<svg width="90" height="90" viewBox="0 0 90 90" fill="none">
+      <g style="animation:burpee 1.2s ease-in-out infinite;transform-origin:45px 45px">
+        <circle cx="45" cy="16" r="7" fill="${c}"/>
+        <line x1="45" y1="23" x2="45" y2="44" stroke="${c}" stroke-width="4.5" stroke-linecap="round"/>
+        <line x1="45" y1="33" x2="30" y2="28" stroke="${c2}" stroke-width="4" stroke-linecap="round"/>
+        <line x1="45" y1="33" x2="60" y2="28" stroke="${c2}" stroke-width="4" stroke-linecap="round"/>
+        <line x1="45" y1="44" x2="30" y2="62" stroke="${c}" stroke-width="4.5" stroke-linecap="round"/>
+        <line x1="45" y1="44" x2="60" y2="62" stroke="${c}" stroke-width="4.5" stroke-linecap="round"/>
+        <line x1="30" y1="62" x2="22" y2="74" stroke="${c}" stroke-width="4" stroke-linecap="round"/>
+        <line x1="60" y1="62" x2="68" y2="74" stroke="${c}" stroke-width="4" stroke-linecap="round"/>
+      </g>
+    </svg>`,
+
+    bench: `<svg width="90" height="90" viewBox="0 0 90 90" fill="none">
+      <rect x="15" y="55" width="60" height="6" rx="3" fill="${c3}"/>
+      <rect x="20" y="61" width="6" height="16" rx="3" fill="${c3}"/>
+      <rect x="64" y="61" width="6" height="16" rx="3" fill="${c3}"/>
+      <circle cx="45" cy="40" r="7" fill="${c}"/>
+      <line x1="45" y1="47" x2="45" y2="56" stroke="${c}" stroke-width="4.5" stroke-linecap="round"/>
+      <g style="animation:run-arm-f 0.8s ease-in-out infinite;transform-origin:45px 47px">
+        <line x1="45" y1="47" x2="22" y2="44" stroke="${c2}" stroke-width="4" stroke-linecap="round"/>
+        <circle cx="16" cy="44" r="5" fill="${c}"/>
+        <rect x="12" y="42" width="8" height="4" rx="2" fill="${c}"/>
+      </g>
+      <g style="animation:run-arm-b 0.8s ease-in-out infinite;transform-origin:45px 47px">
+        <line x1="45" y1="47" x2="68" y2="44" stroke="${c2}" stroke-width="4" stroke-linecap="round"/>
+        <circle cx="74" cy="44" r="5" fill="${c}"/>
+        <rect x="70" y="42" width="8" height="4" rx="2" fill="${c}"/>
+      </g>
+    </svg>`,
+
+    deadlift: `<svg width="90" height="90" viewBox="0 0 90 90" fill="none">
+      <g style="animation:squat 1.2s ease-in-out infinite;transform-origin:45px 50px">
+        <circle cx="45" cy="16" r="7" fill="${c}"/>
+        <line x1="45" y1="23" x2="45" y2="44" stroke="${c}" stroke-width="4.5" stroke-linecap="round"/>
+        <line x1="45" y1="35" x2="34" y2="30" stroke="${c}" stroke-width="4" stroke-linecap="round"/>
+        <line x1="45" y1="35" x2="56" y2="30" stroke="${c}" stroke-width="4" stroke-linecap="round"/>
+        <line x1="34" y1="30" x2="14" y2="58" stroke="${c2}" stroke-width="3.5" stroke-linecap="round"/>
+        <line x1="56" y1="30" x2="76" y2="58" stroke="${c2}" stroke-width="3.5" stroke-linecap="round"/>
+        <rect x="8" y="54" width="12" height="8" rx="4" fill="${c}"/>
+        <rect x="70" y="54" width="12" height="8" rx="4" fill="${c}"/>
+        <line x1="20" y1="58" x2="70" y2="58" stroke="${c}" stroke-width="4" stroke-linecap="round"/>
+        <line x1="45" y1="44" x2="34" y2="64" stroke="${c}" stroke-width="4.5" stroke-linecap="round"/>
+        <line x1="45" y1="44" x2="56" y2="64" stroke="${c}" stroke-width="4.5" stroke-linecap="round"/>
+        <line x1="34" y1="64" x2="28" y2="76" stroke="${c}" stroke-width="4" stroke-linecap="round"/>
+        <line x1="56" y1="64" x2="62" y2="76" stroke="${c}" stroke-width="4" stroke-linecap="round"/>
+      </g>
+    </svg>`,
+
+    boxjump: `<svg width="90" height="90" viewBox="0 0 90 90" fill="none">
+      <rect x="28" y="58" width="34" height="16" rx="3" fill="${c3}" stroke="${c3}" stroke-width="1"/>
+      <rect x="24" y="62" width="4" height="12" rx="2" fill="${c}"/>
+      <rect x="62" y="62" width="4" height="12" rx="2" fill="${c}"/>
+      <g style="animation:jump 0.7s ease-in-out infinite;transform-origin:45px 45px">
+        <circle cx="45" cy="18" r="7" fill="${c}"/>
+        <line x1="45" y1="25" x2="45" y2="44" stroke="${c}" stroke-width="4.5" stroke-linecap="round"/>
+        <line x1="45" y1="35" x2="30" y2="28" stroke="${c2}" stroke-width="4" stroke-linecap="round"/>
+        <line x1="45" y1="35" x2="60" y2="28" stroke="${c2}" stroke-width="4" stroke-linecap="round"/>
+        <line x1="45" y1="44" x2="35" y2="58" stroke="${c}" stroke-width="4.5" stroke-linecap="round"/>
+        <line x1="45" y1="44" x2="55" y2="58" stroke="${c}" stroke-width="4.5" stroke-linecap="round"/>
+      </g>
+    </svg>`,
+
+    lat: `<svg width="90" height="90" viewBox="0 0 90 90" fill="none">
+      <line x1="15" y1="12" x2="75" y2="12" stroke="${c}" stroke-width="4" stroke-linecap="round"/>
+      <circle cx="45" cy="30" r="7" fill="${c}"/>
+      <g style="animation:curl 0.9s ease-in-out infinite;transform-origin:45px 37px">
+        <line x1="45" y1="37" x2="45" y2="55" stroke="${c}" stroke-width="4.5" stroke-linecap="round"/>
+        <line x1="45" y1="37" x2="22" y2="20" stroke="${c2}" stroke-width="4" stroke-linecap="round"/>
+        <line x1="45" y1="37" x2="68" y2="20" stroke="${c2}" stroke-width="4" stroke-linecap="round"/>
+        <circle cx="15" cy="16" r="4" fill="${c}" opacity="0.4"/>
+        <circle cx="75" cy="16" r="4" fill="${c}" opacity="0.4"/>
+        <line x1="45" y1="55" x2="36" y2="72" stroke="${c}" stroke-width="4" stroke-linecap="round"/>
+        <line x1="45" y1="55" x2="54" y2="72" stroke="${c}" stroke-width="4" stroke-linecap="round"/>
+      </g>
+    </svg>`,
+
+    stretch: `<svg width="90" height="90" viewBox="0 0 90 90" fill="none">
+      <g style="animation:breathe 2.5s ease-in-out infinite;transform-origin:45px 50px">
+        <circle cx="45" cy="18" r="7" fill="${c}"/>
+        <line x1="45" y1="25" x2="45" y2="50" stroke="${c}" stroke-width="4.5" stroke-linecap="round"/>
+        <g style="animation:stretch-arm 2.5s ease-in-out infinite;transform-origin:45px 35px">
+          <line x1="45" y1="35" x2="18" y2="30" stroke="${c2}" stroke-width="4" stroke-linecap="round"/>
+          <circle cx="14" cy="30" r="4" fill="${c2}"/>
+        </g>
+        <line x1="45" y1="35" x2="72" y2="30" stroke="${c2}" stroke-width="4" stroke-linecap="round"/>
+        <circle cx="76" cy="30" r="4" fill="${c2}"/>
+        <line x1="45" y1="50" x2="20" y2="72" stroke="${c}" stroke-width="4.5" stroke-linecap="round"/>
+        <line x1="45" y1="50" x2="70" y2="72" stroke="${c}" stroke-width="4.5" stroke-linecap="round"/>
+        <line x1="20" y1="72" x2="8" y2="68" stroke="${c}" stroke-width="3.5" stroke-linecap="round"/>
+        <line x1="70" y1="72" x2="82" y2="68" stroke="${c}" stroke-width="3.5" stroke-linecap="round"/>
+      </g>
+    </svg>`,
+
+    hiit: `<svg width="90" height="90" viewBox="0 0 90 90" fill="none">
+      <g style="animation:burpee 0.5s ease-in-out infinite;transform-origin:45px 45px">
+        <circle cx="45" cy="14" r="7" fill="${c}"/>
+        <line x1="45" y1="21" x2="45" y2="42" stroke="${c}" stroke-width="4.5" stroke-linecap="round"/>
+        <line x1="45" y1="31" x2="28" y2="25" stroke="${c2}" stroke-width="4" stroke-linecap="round"/>
+        <line x1="45" y1="31" x2="62" y2="25" stroke="${c2}" stroke-width="4" stroke-linecap="round"/>
+        <line x1="45" y1="42" x2="30" y2="60" stroke="${c}" stroke-width="4.5" stroke-linecap="round"/>
+        <line x1="45" y1="42" x2="60" y2="60" stroke="${c}" stroke-width="4.5" stroke-linecap="round"/>
+        <line x1="30" y1="60" x2="22" y2="74" stroke="${c}" stroke-width="4" stroke-linecap="round"/>
+        <line x1="60" y1="60" x2="68" y2="74" stroke="${c}" stroke-width="4" stroke-linecap="round"/>
+      </g>
+      <!-- lightning bolt -->
+      <path d="M72 10 L66 22 L72 22 L64 34" stroke="#3d6b4a" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+    </svg>`,
+  };
+  return svgs[type] || svgs['run'];
+}
+
+function makeCard(w) {
+  return `<div class="wcard">
+    <div class="wcard-cat">${w.cat}</div>
+    <div class="wcard-visual" style="background:${w.color}">${getSVG(w.svg)}</div>
+    <div class="wcard-info">
+      <div class="wcard-name">${w.name}</div>
+      <div class="wcard-meta">
+        <span class="wcard-kcal">${w.kcal} kcal</span>
+        <span class="wcard-dot"></span>
+        <span class="wcard-dur">${w.dur}</span>
+      </div>
+    </div>
+  </div>`;
+}
+
+// Build two rows with duplicated cards for seamless loop
+const half = workouts.slice(0, 8);
+const half2 = workouts.slice(8);
+const row1HTML = [...half, ...half].map(makeCard).join('');
+const row2HTML = [...half2, ...half2, ...half.slice(0,4), ...half.slice(0,4)].map(makeCard).join('');
+
+const strips = document.getElementById('strips');
+strips.innerHTML = `
+  <div class="strip row1">${row1HTML}</div>
+  <div class="strip row2">${row2HTML}</div>
+`;
+
+// Scroll-reveal
+const obs = new IntersectionObserver(entries => {
+  entries.forEach(e => { if(e.isIntersecting){e.target.style.opacity='1';e.target.style.transform='translateY(0)';obs.unobserve(e.target)} });
+}, {threshold:0.08});
+document.querySelectorAll('.hero,#features,#how,[style*="padding:7rem"]').forEach(el => {
+  el.style.transition = 'opacity 0.7s ease, transform 0.7s ease';
+  obs.observe(el);
+});
+</script>
+</body>
+</html>

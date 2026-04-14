@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Login | FitTrack</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;800&family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/css/styles.css">
+
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Instrument Sans', sans-serif;
+        }
+
+        /* 🔥 BACKGROUND (FIXED VISIBILITY) */
+        .bg-wrapper {
+            min-height: 100vh;
+
+            background:
+                linear-gradient(rgba(250,249,246,0.75), rgba(250,249,246,0.85)),
+                url('https://images.unsplash.com/photo-1517836357463-d25dfeac3438');
+
+            background-size: cover;
+            background-position: center;
+        }
+
+        /* 🔥 CENTER FIX */
+        .main-container {
+            min-height: calc(100vh - 64px); /* subtract navbar */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* 🔥 CARD */
+        .card {
+            background: rgba(255,255,255,0.9);
+            backdrop-filter: blur(6px);
+            border-radius: 18px;
+            padding: 40px 35px;
+            width: 100%;
+            max-width: 380px;
+            border: 1px solid rgba(0,0,0,0.08);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.1);
+        }
+
+        .form-title {
+            font-family: 'Bricolage Grotesque';
+            font-size: 1.8rem;
+            font-weight: 800;
+            text-align: center;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #777;
+            font-size: 0.9rem;
+            margin-bottom: 25px;
+        }
+
+        .form-control {
+            border-radius: 12px;
+            padding: 12px;
+            border: 1px solid rgba(0,0,0,0.15);
+            margin-bottom: 16px;
+        }
+
+        .form-control:focus {
+            border-color: #2f6b3e;
+            box-shadow: 0 0 0 3px rgba(47,107,62,0.15);
+        }
+
+        .btn-primary {
+            background: #2f6b3e;
+            border: none;
+            border-radius: 100px;
+            padding: 12px;
+            font-weight: 600;
+        }
+
+        .btn-primary:hover {
+            background: #255730;
+        }
+
+        .error-msg {
+            color: #e74c3c;
+            font-size: 0.85rem;
+            text-align: center;
+            margin-bottom: 10px;
+        }
+
+        .link {
+            color: #2f6b3e;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .link:hover {
+            text-decoration: underline;
+        }
+		/* FIX FORM ALIGNMENT */
+		.login-form {
+		    display: flex;
+		    flex-direction: column;
+		}
+
+		.input-group-custom {
+		    width: 100%;
+		    margin-bottom: 16px;
+		}
+
+		.form-control {
+		    width: 100%;
+		    display: block; /* 🔥 prevents inline issue */
+		}
+		.submitBtn{
+			color: white;
+		}
+    </style>
+</head>
+
+<body>
+
+<!-- NAVBAR -->
+<div th:replace="fragments/navbar :: navbar('signin')"></div>
+
+<div class="bg-wrapper">
+
+    <div class="main-container">
+
+        <div class="card">
+
+            <h3 class="form-title">Welcome back 👋</h3>
+            <p class="subtitle">Stay consistent. Stay strong.</p>
+
+			<form action="/auth/signin" method="post" class="login-form">
+
+			    <div class="input-group-custom">
+			        <input type="email"
+			               class="form-control"
+			               name="email"
+			               placeholder="Email address"
+			               required>
+			    </div>
+
+			    <div class="input-group-custom">
+			        <input type="password"
+			               class="form-control"
+			               name="password"
+			               placeholder="Password"
+			               required>
+			    </div>
+
+			    <div class="error-msg" th:if="${param.error}">
+			        Invalid email or password
+			    </div>
+
+			    <button type="submit" class="btn btn-primary w-100 submitBtn">
+			        Login
+			    </button>
+
+			</form>            <p style="text-align:center; margin-top:20px;">
+                Don’t have an account?
+                <a href="/auth/signup" class="link">Create one</a>
+            </p>
+
+        </div>
+
+    </div>
+
+</div>
+
+</body>
+</html>
