@@ -23,6 +23,11 @@ public class UserDetailsRoutes {
 	@Autowired
 	GoalService goalService;
 	
+	@Autowired
+	WorkOutRepo workoutRepo;
+	@Autowired
+	GoalRepo goalRepo;
+	
 	@GetMapping("/profile")
 	public String profile(Model model, HttpSession session) {
 
@@ -36,13 +41,21 @@ public class UserDetailsRoutes {
 	
 	@GetMapping("")
 	public String getWorkouts(Model model, HttpSession session){
-		Users curUser = (Users) session.getAttribute("user");
-		List workouts = repo.getWorkouts(curUser);
- 	    model.addAttribute("workouts", workouts); 
-	    return "sampleDashboard";
 
-	}
-	
+	    Users curUser = (Users) session.getAttribute("user");
+
+	    List<Workout> workouts = workoutRepo.findByUser(curUser);
+	    List<Goal> goals = goalRepo.findByUser(curUser);
+
+ 	    for (Goal g : goals) {
+	        goalService.updateGoalProgress(g, workouts);
+	    }
+
+	    model.addAttribute("workouts", workouts);
+	    model.addAttribute("goals", goals);
+
+	    return "sampleDashboard";
+	}	
 	@GetMapping("/setGoal")
 	public String getGoalFrom() {
 		return "goalSetForm";
@@ -53,27 +66,44 @@ public class UserDetailsRoutes {
 	   @RequestParam GoalType goalType,
 	   @RequestParam double targetValue,
 	   @RequestParam LocalDate targetDate,
-	   @RequestParam String  notes,
+	   @RequestParam String notes,
 	   HttpSession session
-	   ) {
-		Goal curGoal = new Goal();
-		curGoal.setCurrentValue(targetValue);
-		curGoal.setEndDate(targetDate);
-		curGoal.setGoalType(goalType);
-		curGoal.setStatus("Active");
-		curGoal.setNotes(notes);
-		curGoal.setTargetValue(0);
-		curGoal.setUser((Users)session.getAttribute("user"));
-		goalService.setGoal(curGoal);
-		return"redirect:/dashboard";
-	}
-	
-	@GetMapping("/goals")
-	public String getGoals(Model model, HttpSession session) {
-		Users user = (Users) session.getAttribute("user");
-		List<Goal> goals = goalService.getAllGoals(user);
-		model.addAttribute("goals", goals);
-		return "Goals";
-	}
+	) {
 
+	    Goal curGoal = new Goal();
+	    curGoal.setGoalType(goalType);
+ 	    curGoal.setTargetValue(targetValue);
+	    curGoal.setCurrentValue(0);
+	    curGoal.setStartDate(LocalDate.now()); 
+	    curGoal.setEndDate(targetDate);
+	    curGoal.setStatus("ACTIVE");
+	    curGoal.setNotes(notes);
+	    curGoal.setUser((Users) session.getAttribute("user"));
+	    goalService.setGoal(curGoal);
+
+	    return "redirect:/dashboard";
+	}	
+//	@GetMapping("/goals")
+//	public String getGoals(Model model, HttpSession session) {
+//		Users user = (Users) session.getAttribute("user");
+//		List<Goal> goals = goalService.getAllGoals(user);
+//		model.addAttribute("goals", goals);
+//		return "Goals";
+//	}
+	@GetMapping("/goals")
+	public String getGoals(HttpSession session, Model model) {
+
+	    Users user = (Users) session.getAttribute("user");
+
+	    List<Goal> goals = goalRepo.findByUser(user);
+	    List<Workout> workouts = workoutRepo.findByUser(user);
+
+	    for (Goal g : goals) {
+	        goalService.updateGoalProgress(g, workouts);
+	    }
+
+	    model.addAttribute("goals", goals);
+
+	    return "goals";
+	}
 }

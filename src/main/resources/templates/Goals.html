@@ -59,17 +59,20 @@
             color: #00796b;
         }
 
+        /* 🔥 FIXED PROGRESS */
         .progress {
             margin-top: 10px;
             height: 10px;
             background: #eee;
             border-radius: 10px;
+            overflow: hidden;
         }
 
         .progress-bar {
-            height: 10px;
+            height: 100%;
             background: #2f6b3e;
             border-radius: 10px;
+            transition: width 0.3s ease;
         }
 
         .goal-info {
@@ -82,6 +85,12 @@
             font-size: 12px;
             color: #888;
             margin-top: 5px;
+        }
+
+        .extra {
+            font-size: 12px;
+            color: #2f6b3e;
+            margin-top: 4px;
         }
 
         .empty-box {
@@ -109,14 +118,13 @@
 
 <body>
 
-<!-- NAVBAR -->
 <div th:replace="~{fragments/navbar :: navbar('goals')}"></div>
 
 <div class="container">
 
     <h2>🎯 My Goals</h2>
 
-    <!-- 🔥 GOALS LIST -->
+    <!-- GOALS -->
     <div th:if="${goals != null and !#lists.isEmpty(goals)}">
 
         <div th:each="g : ${goals}" class="goal-card">
@@ -126,13 +134,11 @@
 
                 <div class="goal-title"
                      th:text="${g.goalType.toString().replace('_',' ')}">
-                    Goal Type
                 </div>
 
                 <div class="status"
                      th:classappend="${g.status == 'ACTIVE'} ? ' active' : ' completed'"
                      th:text="${g.status}">
-                    ACTIVE
                 </div>
 
             </div>
@@ -143,14 +149,26 @@
                 <span th:text="${g.targetValue}">10</span>
             </div>
 
-            <!-- ✅ SAFE PROGRESS BAR -->
-			<div class="progress-bar"
-			     th:style="'width:' + (${g.targetValue == 0 ? 0 : (g.currentValue * 100.0 / g.targetValue)}) + '%'">
-			</div>
+            <!-- 🔥 FIXED PROGRESS BAR -->
+            <div class="progress">
+                <div class="progress-bar"
+                     th:with="percent=${g.targetValue == 0 ? 0 : (g.currentValue * 100.0 / g.targetValue)}"
+                     th:style="'width:' + (${percent > 100 ? 100 : percent}) + '%'">
+                </div>
+            </div>
 
-            <!-- ✅ SAFE PERCENT TEXT -->
-            <div class="progress-text">
-                <span th:text="${g.targetValue == 0 ? 0 : #numbers.formatDecimal(g.currentValue * 100.0 / g.targetValue, 0, 1)}"></span>%
+            <!-- 🔥 FIXED TEXT -->
+            <div class="progress-text"
+                 th:with="percent=${g.targetValue == 0 ? 0 : (g.currentValue * 100.0 / g.targetValue)}">
+
+                <span th:text="${#numbers.formatDecimal(percent > 100 ? 100 : percent, 0, 1)}"></span>%
+
+                <!-- EXTRA -->
+                <div class="extra" th:if="${percent > 100}">
+                    🎉 Extra:
+                    <span th:text="${g.currentValue - g.targetValue}"></span>
+                </div>
+
             </div>
 
             <!-- DATES -->
@@ -169,7 +187,7 @@
 
     </div>
 
-    <!-- 🔥 EMPTY STATE -->
+    <!-- EMPTY -->
     <div th:if="${goals == null or #lists.isEmpty(goals)}" class="empty-box">
 
         <p>No goals set yet 🎯</p>
