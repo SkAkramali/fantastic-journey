@@ -2,7 +2,8 @@ package com.fitnessTracking;
 
 import java.time.LocalDate;
 import java.util.List;
-
+import java.util.ArrayList;
+import java.util.Arrays;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -33,9 +34,24 @@ public class UserDetailsRoutes {
 
 	    Users user = (Users) session.getAttribute("user");
 
-	    System.out.println(user);
+//	    System.out.println(user);
 	    model.addAttribute("user", user); 
+	    List<Integer> calories =
+	    		repo.getWeeklyCalories(user.getEmail());
 
+        model.addAttribute("caloriesData", calories);
+
+         List<String> days = new ArrayList<>();
+
+        for (int i = 6; i >= 0; i--) {
+            days.add(LocalDate.now()
+                    .minusDays(i)
+                    .getDayOfWeek()
+                    .toString()
+                    .substring(0, 3));
+        }
+
+        model.addAttribute("days", days);
 	    return "profile";
 	}
 	
@@ -83,14 +99,7 @@ public class UserDetailsRoutes {
 
 	    return "redirect:/dashboard";
 	}	
-//	@GetMapping("/goals")
-//	public String getGoals(Model model, HttpSession session) {
-//		Users user = (Users) session.getAttribute("user");
-//		List<Goal> goals = goalService.getAllGoals(user);
-//		model.addAttribute("goals", goals);
-//		return "Goals";
-//	}
-	@GetMapping("/goals")
+ 	@GetMapping("/goals")
 	public String getGoals(HttpSession session, Model model) {
 
 	    Users user = (Users) session.getAttribute("user");
