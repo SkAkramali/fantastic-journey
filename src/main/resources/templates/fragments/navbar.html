@@ -1,8 +1,10 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
 <body>
 
-<nav th:fragment="navbar(activeTab)">
+<th:block th:fragment="navbar(activeTab)">
+
+<nav>
 
     <!-- LOGO -->
     <a class="nav-logo" href="/">
@@ -12,66 +14,60 @@
 
     <div class="nav-right">
 
-        <!-- 🔓 NOT LOGGED IN -->
-        <div th:if="${session.user == null}" style="display:flex;gap:0.5rem;">
-
-            <a class="nav-link"
-               th:classappend="${activeTab == 'home'} ? ' active'"
-               href="/">Home</a>
-
-            <a class="nav-link"
-               th:classappend="${activeTab == 'signin'} ? ' active'"
-               href="/auth/signin">Sign in</a>
-
-            <a class="nav-link btn-nav"
-               th:classappend="${activeTab == 'signup'} ? ' active'"
-               href="/auth/signup">Get Started</a>
-
+        <!-- NOT LOGGED IN -->
+        <div th:if="${session.user == null}" style="display:flex;align-items:center;gap:0.25rem;">
+            <a class="nav-link" th:classappend="${activeTab == 'home'} ? ' active'" href="/">Home</a>
+            <a class="nav-link" th:classappend="${activeTab == 'signin'} ? ' active'" href="/auth/signin">Sign in</a>
+            <a class="nav-link btn-nav" th:classappend="${activeTab == 'signup'} ? ' active'" href="/auth/signup">Get Started</a>
         </div>
 
-        <!-- 🔐 LOGGED IN -->
+        <!-- LOGGED IN -->
         <div th:if="${session.user != null}" class="nav-right-auth">
 
-            <!-- 🔥 ADD WORKOUT -->
-            <button class="btn-nav"
-                    data-bs-toggle="modal"
-                    data-bs-target="#workoutModal">
+            <!-- Dashboard link -->
+            <a class="nav-link"
+               th:classappend="${activeTab == 'dashboard'} ? ' active'"
+               href="/dashboard">Dashboard</a>
+
+            <!-- My Goals -->
+            <a class="nav-link"
+               th:classappend="${activeTab == 'goals'} ? ' active'"
+               href="/dashboard/goals">Goals</a>
+
+            <!-- Add Goal -->
+            <a href="/dashboard/setGoal" class="nav-link"
+               th:classappend="${activeTab == 'goal'} ? ' active'">+ Goal</a>
+
+            <!-- Add Workout -->
+            <button class="btn-nav" onclick="openModal()">
                 + Workout
             </button>
 
-            <!-- 🔥 ADD GOAL -->
-            <a href="/dashboard/setGoal"
-               class="btn-nav"
-               style="text-decoration:none;">
-                🎯 Goal
-            </a>
-
-            <!-- 🔥 VIEW GOALS -->
-            <a href="/dashboard/goals"
-               class="nav-link"
-               th:classappend="${activeTab == 'goals'} ? ' active'">
-                My Goals
-            </a>
-
-            <!-- 🔥 PROFILE DROPDOWN -->
+            <!-- Profile dropdown -->
             <div class="profile-dropdown">
-
                 <div class="profile-icon">
-                    <span th:text="${session.user.name.substring(0,1)}">U</span>
+                    <span th:text="${session.user.name.substring(0,1).toUpperCase()}">U</span>
                 </div>
-
                 <div class="dropdown-menu-custom">
-
+                    <div class="dropdown-header">
+                        <div class="dh-name" th:text="${session.user.name}">Name</div>
+                        <div class="dh-email" th:text="${session.user.email}">email</div>
+                    </div>
+                    <div class="dropdown-divider"></div>
                     <a href="/dashboard/profile" class="dropdown-item">
-                        👤 Profile
+                        <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="5" r="2.5" stroke="currentColor" stroke-width="1.2"/><path d="M2 12c0-2.761 2.239-5 5-5s5 2.239 5 5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+                        Profile
                     </a>
-
-                    <a href="/auth/logout" class="dropdown-item logout">
-                        🚪 Logout
+                    <a href="/dashboard" class="dropdown-item">
+                        <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><rect x="1" y="1" width="5" height="5" rx="1.2" stroke="currentColor" stroke-width="1.2"/><rect x="8" y="1" width="5" height="5" rx="1.2" stroke="currentColor" stroke-width="1.2"/><rect x="1" y="8" width="5" height="5" rx="1.2" stroke="currentColor" stroke-width="1.2"/><rect x="8" y="8" width="5" height="5" rx="1.2" stroke="currentColor" stroke-width="1.2"/></svg>
+                        Dashboard
                     </a>
-
+                    <div class="dropdown-divider"></div>
+                    <a href="/auth/logout" class="dropdown-item dropdown-item-danger">
+                        <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M5 7h7M9.5 4.5L12 7l-2.5 2.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/><path d="M6 3H3a1 1 0 00-1 1v6a1 1 0 001 1h3" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+                        Sign Out
+                    </a>
                 </div>
-
             </div>
 
         </div>
@@ -79,6 +75,61 @@
     </div>
 
 </nav>
+
+<!-- WORKOUT MODAL — available on every authenticated page -->
+<div th:if="${session.user != null}" class="modal-overlay" id="workoutModal">
+    <div class="modal-box">
+        <div class="modal-head">
+            <span class="modal-title">Log Workout</span>
+            <button class="modal-close" onclick="closeModal()">&#x2715;</button>
+        </div>
+        <div class="modal-body">
+            <form action="/Workouts/add" method="post">
+                <div class="m-group">
+                    <label class="m-label">Workout Type</label>
+                    <select name="workoutName" class="m-select" required>
+                        <option value="">Select type&hellip;</option>
+                        <option value="RUNNING">&#x1F3C3; Running</option>
+                        <option value="GYM">&#x1F4AA; Gym</option>
+                        <option value="CYCLING">&#x1F6B4; Cycling</option>
+                    </select>
+                </div>
+                <div class="m-group">
+                    <label class="m-label">Duration (minutes)</label>
+                    <input type="number" name="duration" class="m-input"
+                           placeholder="e.g. 45" min="1" max="600" required>
+                </div>
+                <div class="m-group">
+                    <label class="m-label">Date</label>
+                    <input type="date" name="date" id="modal-date-input" class="m-input" required>
+                </div>
+                <div class="m-group">
+                    <label class="m-label">Notes (optional)</label>
+                    <textarea name="notes" class="m-textarea" placeholder="How did it go?"></textarea>
+                </div>
+                <button type="submit" class="btn-save">Save Workout</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script th:if="${session.user != null}">
+    function openModal() {
+        document.getElementById('workoutModal').classList.add('open');
+        document.body.style.overflow = 'hidden';
+        var d = document.getElementById('modal-date-input');
+        if (d && !d.value) d.valueAsDate = new Date();
+    }
+    function closeModal() {
+        document.getElementById('workoutModal').classList.remove('open');
+        document.body.style.overflow = '';
+    }
+    document.getElementById('workoutModal').addEventListener('click', function(e) {
+        if (e.target === this) closeModal();
+    });
+</script>
+
+</th:block>
 
 </body>
 </html>

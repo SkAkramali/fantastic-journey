@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${user.name} + ' — FitTrack Admin'">User Detail</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        :root {
+            --sidebar-w: 230px;
+            --bg:        #0f0f0e;
+            --sidebar:   #141412;
+            --surface:   #1c1b19;
+            --surface-2: #232220;
+            --border:    rgba(255,255,255,0.07);
+            --border-md: rgba(255,255,255,0.11);
+            --ink:       #f0ede8;
+            --ink-2:     #a09d97;
+            --ink-3:     #6b6860;
+            --accent:    #2f6b3e;
+            --accent-lt: rgba(47,107,62,0.18);
+            --accent-bd: rgba(47,107,62,0.35);
+            --green:     #6fcf7a;
+            --orange:    #f97316;
+            --orange-lt: rgba(249,115,22,0.15);
+            --blue:      #60a5fa;
+            --blue-lt:   rgba(96,165,250,0.15);
+            --teal:      #2dd4bf;
+            --teal-lt:   rgba(45,212,191,0.15);
+            --red:       #ef4444;
+            --red-lt:    rgba(239,68,68,0.15);
+            --red-bd:    rgba(239,68,68,0.3);
+        }
+
+        body {
+            font-family: 'Instrument Sans', sans-serif;
+            background: var(--bg);
+            color: var(--ink);
+            min-height: 100vh;
+            display: flex;
+        }
+
+        /* SIDEBAR */
+        .admin-sidebar { width: var(--sidebar-w); flex-shrink: 0; background: var(--sidebar); border-right: 1px solid var(--border); display: flex; flex-direction: column; position: fixed; top: 0; left: 0; bottom: 0; z-index: 100; }
+        .as-logo { padding: 1.4rem 1.2rem 1.2rem; border-bottom: 1px solid var(--border); }
+        .as-logo-link { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+        .as-logo-mark { width: 34px; height: 34px; background: var(--accent); border-radius: 9px; display: flex; align-items: center; justify-content: center; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; font-size: 1rem; color: #fff; flex-shrink: 0; }
+        .as-brand { font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 1rem; color: var(--ink); letter-spacing: -0.02em; }
+        .as-role { font-size: 0.68rem; color: var(--ink-3); margin-top: 1px; }
+        .as-nav { flex: 1; padding: 1rem 0.7rem; overflow-y: auto; }
+        .as-section-label { font-size: 0.62rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-3); padding: 0.8rem 0.6rem 0.4rem; }
+        .as-item { display: flex; align-items: center; gap: 9px; padding: 0.52rem 0.75rem; border-radius: 8px; font-size: 0.84rem; font-weight: 500; color: var(--ink-2); text-decoration: none; transition: background 0.12s, color 0.12s; margin-bottom: 2px; }
+        .as-item:hover { background: rgba(255,255,255,0.05); color: var(--ink); }
+        .as-active { background: var(--accent-lt) !important; color: var(--green) !important; font-weight: 600; }
+        .as-icon { width: 15px; height: 15px; flex-shrink: 0; }
+        .as-footer { padding: 0.9rem 1rem; border-top: 1px solid var(--border); display: flex; flex-direction: column; gap: 0.3rem; }
+        .as-footer-link, .as-logout { display: flex; align-items: center; gap: 8px; padding: 0.5rem 0.6rem; border-radius: 7px; font-size: 0.8rem; color: var(--ink-3); text-decoration: none; transition: background 0.12s, color 0.12s; }
+        .as-footer-link:hover { background: rgba(255,255,255,0.05); color: var(--ink-2); }
+        .as-logout:hover { background: rgba(239,68,68,0.1); color: #fca5a5; }
+
+        /* MAIN */
+        .admin-main { margin-left: var(--sidebar-w); flex: 1; display: flex; flex-direction: column; min-height: 100vh; }
+
+        .admin-topbar { height: 58px; padding: 0 2rem; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--border); background: var(--sidebar); position: sticky; top: 0; z-index: 50; }
+        .topbar-left { display: flex; align-items: center; gap: 0.7rem; }
+        .topbar-title { font-family: 'Bricolage Grotesque', sans-serif; font-size: 1rem; font-weight: 700; color: var(--ink); letter-spacing: -0.02em; }
+        .topbar-sep { color: var(--ink-3); font-size: 0.9rem; }
+        .topbar-sub { font-size: 0.85rem; color: var(--ink-3); }
+        .topbar-right { display: flex; align-items: center; gap: 0.8rem; }
+
+        .admin-tag { display: flex; align-items: center; gap: 6px; font-size: 0.78rem; color: var(--ink-3); }
+        .admin-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--green); animation: pulse 2s infinite; }
+        @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.4;transform:scale(0.7)} }
+
+        .btn-back { display: inline-flex; align-items: center; gap: 6px; padding: 5px 12px; background: var(--surface-2); border: 1px solid var(--border-md); border-radius: 7px; font-size: 0.8rem; color: var(--ink-2); text-decoration: none; transition: background 0.12s; }
+        .btn-back:hover { background: rgba(255,255,255,0.07); color: var(--ink); }
+
+        .admin-body { padding: 2rem; flex: 1; }
+
+        /* PROFILE HEADER */
+        .profile-header {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            margin-bottom: 2rem;
+            padding: 1.5rem;
+            background: var(--surface);
+            border: 1px solid var(--border-md);
+            border-radius: 14px;
+        }
+
+        .ph-left { display: flex; align-items: center; gap: 1.2rem; }
+
+        .ph-avatar {
+            width: 58px; height: 58px;
+            border-radius: 50%;
+            background: var(--accent);
+            color: #fff;
+            font-family: 'Bricolage Grotesque', sans-serif;
+            font-size: 1.4rem; font-weight: 800;
+            display: flex; align-items: center; justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .ph-name { font-family: 'Bricolage Grotesque', sans-serif; font-size: 1.2rem; font-weight: 700; color: var(--ink); letter-spacing: -0.02em; margin-bottom: 0.25rem; }
+        .ph-email { font-size: 0.82rem; color: var(--ink-3); margin-bottom: 0.5rem; }
+
+        .ph-tags { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+
+        .ph-tag {
+            display: inline-flex; align-items: center; gap: 4px;
+            padding: 2px 9px; border-radius: 20px;
+            font-size: 0.7rem; font-weight: 600;
+        }
+
+        .tag-gender  { background: var(--surface-2); color: var(--ink-2); border: 1px solid var(--border-md); }
+        .tag-age     { background: var(--accent-lt); color: var(--green); border: 1px solid var(--accent-bd); }
+        .tag-height  { background: var(--blue-lt); color: var(--blue); border: 1px solid rgba(96,165,250,0.3); }
+        .tag-weight  { background: var(--orange-lt); color: var(--orange); border: 1px solid rgba(249,115,22,0.3); }
+
+        .ph-actions { display: flex; gap: 0.6rem; align-items: center; }
+
+        .btn-delete-user {
+            display: inline-flex; align-items: center; gap: 6px;
+            padding: 6px 14px;
+            background: var(--red-lt);
+            border: 1px solid var(--red-bd);
+            border-radius: 8px;
+            font-family: inherit; font-size: 0.82rem; font-weight: 600;
+            color: #fca5a5; cursor: pointer;
+            transition: background 0.12s;
+        }
+
+        .btn-delete-user:hover { background: rgba(239,68,68,0.25); }
+
+        /* STATS ROW */
+        .stats-row {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-mini {
+            background: var(--surface);
+            border: 1px solid var(--border-md);
+            border-radius: 12px;
+            padding: 1rem 1.2rem;
+            display: flex; align-items: center; gap: 0.9rem;
+        }
+
+        .sm-icon {
+            width: 36px; height: 36px; border-radius: 10px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1rem; flex-shrink: 0;
+        }
+
+        .smi-green  { background: var(--accent-lt); }
+        .smi-blue   { background: var(--blue-lt); }
+        .smi-orange { background: var(--orange-lt); }
+
+        .sm-value { font-family: 'Bricolage Grotesque', sans-serif; font-size: 1.5rem; font-weight: 800; color: var(--ink); letter-spacing: -0.04em; line-height: 1; }
+        .sm-label { font-size: 0.74rem; color: var(--ink-3); margin-top: 0.2rem; }
+
+        /* CONTENT GRID */
+        .content-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.2rem; }
+
+        /* TABLE CARD */
+        .table-card { background: var(--surface); border: 1px solid var(--border-md); border-radius: 13px; overflow: hidden; }
+
+        .tc-head { padding: 1rem 1.3rem; border-bottom: 1px solid var(--border); }
+        .tc-title { font-size: 0.9rem; font-weight: 600; color: var(--ink); }
+        .tc-sub { font-size: 0.75rem; color: var(--ink-3); margin-top: 2px; }
+
+        .data-table { width: 100%; border-collapse: collapse; }
+        .data-table th { padding: 0.6rem 1.2rem; font-size: 0.65rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.07em; color: var(--ink-3); text-align: left; background: rgba(255,255,255,0.02); border-bottom: 1px solid var(--border); }
+        .data-table td { padding: 0.8rem 1.2rem; font-size: 0.82rem; color: var(--ink); vertical-align: middle; border-bottom: 1px solid var(--border); }
+        .data-table tbody tr:last-child td { border-bottom: none; }
+        .data-table tbody tr:hover td { background: rgba(255,255,255,0.025); }
+
+        .wo-badge { display: inline-flex; align-items: center; gap: 4px; padding: 2px 8px; border-radius: 20px; font-size: 0.72rem; font-weight: 600; }
+        .wo-run   { background: var(--accent-lt); color: var(--green); }
+        .wo-gym   { background: var(--blue-lt);   color: var(--blue); }
+        .wo-cycle { background: var(--orange-lt);  color: var(--orange); }
+
+        .sb-active    { background: var(--accent-lt); color: var(--green); padding: 2px 8px; border-radius: 20px; font-size: 0.72rem; font-weight: 600; display: inline-block; }
+        .sb-completed { background: var(--teal-lt); color: var(--teal); padding: 2px 8px; border-radius: 20px; font-size: 0.72rem; font-weight: 600; display: inline-block; }
+
+        .prog-wrap { display: flex; align-items: center; gap: 8px; min-width: 100px; }
+        .prog-track { flex: 1; height: 4px; border-radius: 4px; background: rgba(255,255,255,0.08); overflow: hidden; }
+        .prog-fill { height: 100%; border-radius: 4px; background: var(--accent); }
+        .prog-text { font-size: 0.75rem; color: var(--ink-3); white-space: nowrap; }
+
+        .muted { color: var(--ink-3); font-size: 0.8rem; }
+
+        .empty-row td { text-align: center; padding: 2.5rem !important; color: var(--ink-3); font-size: 0.83rem; }
+
+        /* CONFIRM */
+        .confirm-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.7); backdrop-filter: blur(4px); display: flex; align-items: center; justify-content: center; z-index: 1000; opacity: 0; visibility: hidden; transition: opacity 0.2s, visibility 0.2s; }
+        .confirm-overlay.open { opacity: 1; visibility: visible; }
+        .confirm-box { background: var(--surface); border: 1px solid var(--border-md); border-radius: 14px; padding: 1.8rem; max-width: 380px; width: calc(100% - 2rem); box-shadow: 0 24px 64px rgba(0,0,0,0.5); transform: translateY(8px); transition: transform 0.2s; }
+        .confirm-overlay.open .confirm-box { transform: translateY(0); }
+        .confirm-icon { font-size: 2rem; margin-bottom: 1rem; }
+        .confirm-title { font-family: 'Bricolage Grotesque', sans-serif; font-size: 1.1rem; font-weight: 700; color: var(--ink); margin-bottom: 0.5rem; }
+        .confirm-text { font-size: 0.85rem; color: var(--ink-3); margin-bottom: 1.5rem; line-height: 1.5; }
+        .confirm-actions { display: flex; gap: 0.7rem; }
+        .btn-cancel-confirm { flex: 1; padding: 0.75rem; background: var(--surface-2); border: 1px solid var(--border-md); border-radius: 9px; font-family: inherit; font-size: 0.87rem; font-weight: 600; color: var(--ink-2); cursor: pointer; transition: background 0.12s; }
+        .btn-cancel-confirm:hover { background: rgba(255,255,255,0.08); }
+        .btn-confirm-delete { flex: 1; padding: 0.75rem; background: var(--red); border: none; border-radius: 9px; font-family: inherit; font-size: 0.87rem; font-weight: 600; color: #fff; cursor: pointer; transition: background 0.12s; }
+        .btn-confirm-delete:hover { background: #dc2626; }
+
+        @media (max-width: 900px) { .content-grid { grid-template-columns: 1fr; } .stats-row { grid-template-columns: 1fr; } }
+        @media (max-width: 700px) { .admin-sidebar { display: none; } .admin-main { margin-left: 0; } }
+    </style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<div th:replace="fragments/admin-nav :: adminNav('users')"></div>
+
+<div class="admin-main">
+
+    <!-- TOP BAR -->
+    <div class="admin-topbar">
+        <div class="topbar-left">
+            <span class="topbar-title">Users</span>
+            <span class="topbar-sep">/</span>
+            <span class="topbar-sub" th:text="${user.name}">User</span>
+        </div>
+        <div class="topbar-right">
+            <a href="/admin/users" class="btn-back">← All Users</a>
+            <div class="admin-tag">
+                <span class="admin-dot"></span>
+                <span th:text="${session.admin?.username}">admin</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- BODY -->
+    <div class="admin-body" th:object="${user}">
+
+        <!-- PROFILE HEADER -->
+        <div class="profile-header">
+            <div class="ph-left">
+                <div class="ph-avatar" th:text="*{name.substring(0,1).toUpperCase()}">A</div>
+                <div>
+                    <div class="ph-name" th:text="*{name}">Name</div>
+                    <div class="ph-email" th:text="*{email}">email</div>
+                    <div class="ph-tags">
+                        <span class="ph-tag tag-gender" th:text="*{gender}">Gender</span>
+                        <span class="ph-tag tag-age"    th:text="*{age} + ' yrs'">Age</span>
+                        <span class="ph-tag tag-height" th:text="*{height} + ' cm'">Height</span>
+                        <span class="ph-tag tag-weight" th:text="*{weight} + ' kg'">Weight</span>
+                    </div>
+                </div>
+            </div>
+            <div class="ph-actions">
+                <button class="btn-delete-user" type="button" onclick="openConfirm()">
+                    <svg width="13" height="13" viewBox="0 0 13 13" fill="none">
+                        <path d="M2 3.5h9M5 3.5V2.5h3v1M5.5 6v3.5M7.5 6v3.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+                        <path d="M3 3.5l.5 7a1 1 0 001 1h4a1 1 0 001-1l.5-7" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+                    </svg>
+                    Delete Account
+                </button>
+            </div>
+        </div>
+
+        <!-- STATS -->
+        <div class="stats-row">
+            <div class="stat-mini">
+                <div class="sm-icon smi-green">🏋️</div>
+                <div>
+                    <div class="sm-value" th:text="${workouts.size()}">0</div>
+                    <div class="sm-label">Total workouts</div>
+                </div>
+            </div>
+            <div class="stat-mini">
+                <div class="sm-icon smi-blue">🎯</div>
+                <div>
+                    <div class="sm-value" th:text="${goals.size()}">0</div>
+                    <div class="sm-label">Goals created</div>
+                </div>
+            </div>
+            <div class="stat-mini">
+                <div class="sm-icon smi-orange">🔥</div>
+                <div>
+                    <div class="sm-value"
+                         th:text="${workouts.isEmpty() ? 0 : #aggregates.sum(workouts.![duration * 10])}">0</div>
+                    <div class="sm-label">Total kcal burned</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- CONTENT GRID -->
+        <div class="content-grid">
+
+            <!-- WORKOUTS -->
+            <div class="table-card">
+                <div class="tc-head">
+                    <div class="tc-title">Workout History</div>
+                    <div class="tc-sub" th:text="${workouts.size()} + ' sessions logged'">0 sessions</div>
+                </div>
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Type</th>
+                            <th>Duration</th>
+                            <th>Calories</th>
+                            <th>Date</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="w : ${workouts}">
+                            <td>
+                                <span class="wo-badge"
+                                      th:classappend="${w.workout.name() == 'RUNNING'} ? 'wo-run' :
+                                                     (${w.workout.name() == 'GYM'} ? 'wo-gym' : 'wo-cycle')"
+                                      th:text="${#strings.capitalize(w.workout.name().toLowerCase())}">
+                                </span>
+                            </td>
+                            <td class="muted" th:text="${w.duration} + ' min'">—</td>
+                            <td class="muted" th:text="${w.duration * 10} + ' kcal'">—</td>
+                            <td class="muted" th:text="${w.date}">—</td>
+                        </tr>
+                        <tr class="empty-row" th:if="${workouts.isEmpty()}">
+                            <td colspan="4">No workouts logged yet.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- GOALS -->
+            <div class="table-card">
+                <div class="tc-head">
+                    <div class="tc-title">Goals</div>
+                    <div class="tc-sub" th:text="${goals.size()} + ' goals created'">0 goals</div>
+                </div>
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Type</th>
+                            <th>Progress</th>
+                            <th>Status</th>
+                            <th>Due</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="g : ${goals}"
+                            th:with="pct=${g.targetValue == 0 ? 0 :
+                                        (g.currentValue * 100.0 / g.targetValue > 100 ? 100 :
+                                         g.currentValue * 100.0 / g.targetValue)}">
+                            <td class="muted"
+                                th:text="${g.goalType.toString().replace('_',' ')}">—</td>
+                            <td>
+                                <div class="prog-wrap">
+                                    <div class="prog-track">
+                                        <div class="prog-fill" th:style="'width:' + ${pct} + '%'"></div>
+                                    </div>
+                                    <span class="prog-text"
+                                          th:text="${#numbers.formatDecimal(pct,0,0)} + '%'">0%</span>
+                                </div>
+                            </td>
+                            <td>
+                                <span th:classappend="${g.status == 'ACTIVE'} ? 'sb-active' : 'sb-completed'"
+                                      th:text="${g.status}">—</span>
+                            </td>
+                            <td class="muted" th:text="${g.endDate}">—</td>
+                        </tr>
+                        <tr class="empty-row" th:if="${goals.isEmpty()}">
+                            <td colspan="4">No goals set yet.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<!-- DELETE CONFIRM -->
+<div class="confirm-overlay" id="confirmOverlay">
+    <div class="confirm-box">
+        <div class="confirm-icon">⚠️</div>
+        <div class="confirm-title">Delete This Account?</div>
+        <div class="confirm-text"
+             th:text="'This will permanently delete the account for ' + ${user.name} + ' and all associated data. This cannot be undone.'">
+        </div>
+        <div class="confirm-actions">
+            <button class="btn-cancel-confirm" onclick="closeConfirm()">Cancel</button>
+            <form action="/admin/users/delete" method="post" style="flex:1;">
+                <input type="hidden" name="email" th:value="${user.email}">
+                <button type="submit" class="btn-confirm-delete" style="width:100%;">Delete</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    function openConfirm()  { document.getElementById('confirmOverlay').classList.add('open');    document.body.style.overflow = 'hidden'; }
+    function closeConfirm() { document.getElementById('confirmOverlay').classList.remove('open'); document.body.style.overflow = ''; }
+    document.getElementById('confirmOverlay').addEventListener('click', e => { if (e.target === this) closeConfirm(); });
+</script>
+
+</body>
+</html>

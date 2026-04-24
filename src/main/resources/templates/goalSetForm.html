@@ -1,153 +1,349 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
 <head>
-    <title>Set Goal</title>
-
-    <!-- Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;800&family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet">
-
-    <!-- Global CSS -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Set Goal — FitTrack</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/css/styles.css">
 
     <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        :root {
+            --accent:    #2f6b3e;
+            --accent-dk: #1e4a2b;
+            --accent-lt: #e8f2eb;
+            --accent-md: #c5dfc9;
+            --ink:       #1a1916;
+            --ink-2:     #4a4840;
+            --ink-3:     #8a877f;
+            --bg:        #f5f5f3;
+            --surface:   #ffffff;
+            --border:    rgba(26,25,22,0.1);
+            --border-md: rgba(26,25,22,0.14);
+        }
+
         body {
             font-family: 'Instrument Sans', sans-serif;
-            margin: 0;
-
-            background: linear-gradient(
-                rgba(15,23,42,0.7),
-                rgba(15,23,42,0.7)
-            ),
-            url('https://images.unsplash.com/photo-1558611848-73f7eb4001a1') center/cover no-repeat;
-
+            background: var(--bg);
+            color: var(--ink);
             min-height: 100vh;
-
-            /* 🔥 FIX FOR VERTICAL ALIGNMENT */
-            display: flex;
-            flex-direction: column;
         }
 
-        .container-box {
-            flex: 1; /* 🔥 IMPORTANT */
+        .page-wrap {
+            min-height: calc(100vh - 64px);
             display: flex;
-            justify-content: center;
             align-items: center;
-            padding: 40px 20px;
+            justify-content: center;
+            padding: 2.5rem 1.5rem;
         }
 
-        .goal-card {
-            background: rgba(255,255,255,0.95);
-            backdrop-filter: blur(10px);
+        /* ── FORM CARD ── */
+        .form-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
             border-radius: 18px;
-            padding: 40px;
             width: 100%;
-            max-width: 450px;
-            box-shadow: 0 15px 40px rgba(0,0,0,0.2);
-
-            /* optional polish */
-            transform: translateY(-10px);
+            max-width: 500px;
+            box-shadow: 0 4px 6px rgba(26,25,22,0.04), 0 20px 48px rgba(26,25,22,0.08);
+            overflow: hidden;
         }
 
-        .title {
-            font-family: 'Bricolage Grotesque';
-            font-size: 2rem;
-            font-weight: 800;
-            text-align: center;
-            margin-bottom: 10px;
+        .form-card-head {
+            padding: 1.8rem 2rem 1.4rem;
+            border-bottom: 1px solid var(--border);
+            background: linear-gradient(135deg, var(--accent-lt) 0%, rgba(255,255,255,0) 60%);
         }
 
-        .subtitle {
-            text-align: center;
-            color: #666;
-            font-size: 0.9rem;
-            margin-bottom: 25px;
-        }
-
-        .form-control, .form-select {
+        .head-icon {
+            width: 44px; height: 44px;
+            background: var(--accent-lt);
+            border: 1px solid var(--accent-md);
             border-radius: 12px;
-            padding: 14px;
-            border: 1px solid rgba(0,0,0,0.15);
-            margin-bottom: 18px;
-            font-size: 0.95rem;
-            width: 100%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
         }
 
-        .form-control:focus, .form-select:focus {
-            border-color: #2f6b3e;
-            box-shadow: 0 0 0 3px rgba(47,107,62,0.2);
-            outline: none;
+        .form-title {
+            font-family: 'Bricolage Grotesque', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: var(--ink);
+            letter-spacing: -0.03em;
+            margin-bottom: 0.3rem;
         }
 
-        .btn-main {
-            background: #2f6b3e;
-            border: none;
-            color: white;
-            border-radius: 100px;
-            padding: 14px;
+        .form-subtitle { font-size: 0.85rem; color: var(--ink-3); }
+
+        .form-body { padding: 1.8rem 2rem; }
+
+        /* GOAL TYPE SELECTOR */
+        .goal-types {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.6rem;
+            margin-bottom: 1.4rem;
+        }
+
+        .goal-type-opt {
+            position: relative;
+        }
+
+        .goal-type-opt input[type="radio"] {
+            position: absolute;
+            opacity: 0;
+            width: 0; height: 0;
+        }
+
+        .goal-type-label {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 0.75rem 0.9rem;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            cursor: pointer;
+            transition: border-color 0.15s, background 0.15s;
+            background: var(--bg);
+        }
+
+        .goal-type-label:hover {
+            border-color: var(--accent-md);
+            background: var(--accent-lt);
+        }
+
+        .goal-type-opt input:checked + .goal-type-label {
+            border-color: var(--accent);
+            background: var(--accent-lt);
+            box-shadow: 0 0 0 3px rgba(47,107,62,0.08);
+        }
+
+        .gt-icon {
+            font-size: 1rem;
+            width: 28px;
+            text-align: center;
+            flex-shrink: 0;
+        }
+
+        .gt-text { }
+        .gt-name { font-size: 0.82rem; font-weight: 600; color: var(--ink); }
+        .gt-desc { font-size: 0.7rem; color: var(--ink-3); margin-top: 1px; }
+
+        /* FORM FIELDS */
+        .form-group { margin-bottom: 1.2rem; }
+
+        .form-label {
+            display: block;
+            font-size: 0.76rem;
             font-weight: 600;
-            transition: 0.2s;
-            width: 100%;
+            color: var(--ink-2);
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            margin-bottom: 0.45rem;
         }
 
-        .btn-main:hover {
-            background: #255730;
+        .form-hint {
+            font-size: 0.72rem;
+            color: var(--ink-3);
+            margin-top: 0.3rem;
+            font-weight: 400;
+            text-transform: none;
+            letter-spacing: 0;
+        }
+
+        .form-input,
+        .form-select,
+        .form-textarea {
+            width: 100%;
+            padding: 0.78rem 1rem;
+            border: 1px solid var(--border-md);
+            border-radius: 10px;
+            font-family: 'Instrument Sans', sans-serif;
+            font-size: 0.9rem;
+            color: var(--ink);
+            background: var(--bg);
+            outline: none;
+            transition: border-color 0.15s, box-shadow 0.15s, background 0.15s;
+            appearance: none;
+        }
+
+        .form-input:focus,
+        .form-select:focus,
+        .form-textarea:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(47,107,62,0.1);
+            background: #fff;
+        }
+
+        .form-input::placeholder,
+        .form-textarea::placeholder { color: var(--ink-3); }
+
+        .form-select {
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%238a877f' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 1rem center;
+            padding-right: 2.5rem;
+        }
+
+        .form-textarea { resize: vertical; min-height: 80px; }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.75rem;
+        }
+
+        /* DIVIDER */
+        .form-divider {
+            height: 1px;
+            background: var(--border);
+            margin: 1.4rem 0;
+        }
+
+        /* SUBMIT */
+        .btn-submit {
+            width: 100%;
+            padding: 0.9rem;
+            background: var(--accent);
+            color: #fff;
+            font-family: 'Instrument Sans', sans-serif;
+            font-size: 0.95rem;
+            font-weight: 600;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: background 0.15s, transform 0.12s;
+            letter-spacing: 0.01em;
+        }
+
+        .btn-submit:hover {
+            background: var(--accent-dk);
             transform: translateY(-1px);
+        }
+
+        .btn-cancel {
+            display: block;
+            text-align: center;
+            margin-top: 0.8rem;
+            font-size: 0.85rem;
+            color: var(--ink-3);
+            text-decoration: none;
+        }
+
+        .btn-cancel:hover { color: var(--ink); }
+
+        @media (max-width: 540px) {
+            .goal-types { grid-template-columns: 1fr; }
+            .form-row   { grid-template-columns: 1fr; }
+            .form-body  { padding: 1.4rem 1.2rem; }
+            .form-card-head { padding: 1.4rem 1.2rem 1.2rem; }
         }
     </style>
 </head>
-
 <body>
 
-<!-- NAVBAR -->
-<div th:replace="~{fragments/navbar :: navbar('goal')}"></div>
+<div th:replace="fragments/navbar :: navbar('goal')"></div>
 
-<div class="container-box">
+<div class="page-wrap">
+    <div class="form-card">
 
-    <div class="goal-card">
+        <!-- CARD HEADER -->
+        <div class="form-card-head">
+            <div class="head-icon">🎯</div>
+            <div class="form-title">Set a New Goal</div>
+            <div class="form-subtitle">Define your target and let FitTrack track your progress automatically.</div>
+        </div>
 
-        <div class="title">🎯 Set Your Goal</div>
-        <div class="subtitle">Stay focused. Stay consistent.</div>
+        <!-- CARD BODY -->
+        <div class="form-body">
+            <form action="/dashboard/setGoal" method="post">
 
-        <form action="/dashboard/setGoal" method="post">
+                <!-- GOAL TYPE VISUAL SELECTOR (hidden select for real submission) -->
+                <div class="form-group">
+                    <label class="form-label">Goal Type</label>
+                    <div class="goal-types">
+                        <div class="goal-type-opt">
+                            <input type="radio" name="goalType" id="gt-wl" value="WEIGHT_LOSS" required>
+                            <label class="goal-type-label" for="gt-wl">
+                                <span class="gt-icon">⚖️</span>
+                                <div class="gt-text">
+                                    <div class="gt-name">Weight Loss</div>
+                                    <div class="gt-desc">Reduce body weight</div>
+                                </div>
+                            </label>
+                        </div>
+                        <div class="goal-type-opt">
+                            <input type="radio" name="goalType" id="gt-wg" value="WEIGHT_GAIN">
+                            <label class="goal-type-label" for="gt-wg">
+                                <span class="gt-icon">💪</span>
+                                <div class="gt-text">
+                                    <div class="gt-name">Weight Gain</div>
+                                    <div class="gt-desc">Build muscle mass</div>
+                                </div>
+                            </label>
+                        </div>
+                        <div class="goal-type-opt">
+                            <input type="radio" name="goalType" id="gt-cb" value="CALORIE_BURN">
+                            <label class="goal-type-label" for="gt-cb">
+                                <span class="gt-icon">🔥</span>
+                                <div class="gt-text">
+                                    <div class="gt-name">Calorie Burn</div>
+                                    <div class="gt-desc">Total kcal target</div>
+                                </div>
+                            </label>
+                        </div>
+                        <div class="goal-type-opt">
+                            <input type="radio" name="goalType" id="gt-wk" value="WORKOUTS">
+                            <label class="goal-type-label" for="gt-wk">
+                                <span class="gt-icon">🏋️</span>
+                                <div class="gt-text">
+                                    <div class="gt-name">Workout Count</div>
+                                    <div class="gt-desc">Number of sessions</div>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+                </div>
 
-            <!-- Goal Type -->
-            <select name="goalType" class="form-select" required>
-                <option value="">Select Goal Type</option>
-                <option value="WEIGHT_LOSS">Weight Loss</option>
-                <option value="WEIGHT_GAIN">Weight Gain</option>
-                <option value="CALORIE_BURN">Calories Burn</option>
-                <option value="WORKOUTS">Workout Count</option>
-            </select>
+                <div class="form-divider"></div>
 
-            <!-- Target Value -->
-            <input type="number"
-                   step="0.1"
-                   name="targetValue"
-                   class="form-control"
-                   placeholder="Target Value (e.g. 5 kg / 2000 cal)"
-                   required>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label" for="targetValue">Target Value</label>
+                        <input type="number" id="targetValue" name="targetValue"
+                               class="form-input" placeholder="e.g. 5" step="0.1" min="0.1" required>
+                        <div class="form-hint">kg / kcal / sessions</div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="targetDate">Target Date</label>
+                        <input type="date" id="targetDate" name="targetDate"
+                               class="form-input" required>
+                    </div>
+                </div>
 
-            <!-- Target Date -->
-            <input type="date"
-                   name="targetDate"
-                   class="form-control"
-                   required>
+                <div class="form-group">
+                    <label class="form-label" for="notes">Notes <span style="font-weight:400;text-transform:none;letter-spacing:0;color:var(--ink-3)">(optional)</span></label>
+                    <textarea id="notes" name="notes" class="form-textarea"
+                              placeholder="What motivates you? Any special notes…"></textarea>
+                </div>
 
-            <!-- Notes -->
-            <textarea name="notes"
-                      class="form-control"
-                      placeholder="Optional note..."></textarea>
+                <button type="submit" class="btn-submit">Set Goal →</button>
+                <a href="/dashboard" class="btn-cancel">Cancel</a>
 
-            <!-- Submit -->
-            <button type="submit" class="btn-main">
-                🚀 Set Goal
-            </button>
-
-        </form>
-
+            </form>
+        </div>
     </div>
-
 </div>
+
+<script>
+    // Set min date to today
+    const d = new Date();
+    d.setDate(d.getDate() + 1);
+    document.getElementById('targetDate').min = d.toISOString().split('T')[0];
+</script>
 
 </body>
 </html>

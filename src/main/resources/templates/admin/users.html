@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Users — FitTrack Admin</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        :root {
+            --sidebar-w: 230px;
+            --bg:        #0f0f0e;
+            --sidebar:   #141412;
+            --surface:   #1c1b19;
+            --surface-2: #232220;
+            --border:    rgba(255,255,255,0.07);
+            --border-md: rgba(255,255,255,0.11);
+            --ink:       #f0ede8;
+            --ink-2:     #a09d97;
+            --ink-3:     #6b6860;
+            --accent:    #2f6b3e;
+            --accent-lt: rgba(47,107,62,0.18);
+            --green:     #6fcf7a;
+            --red:       #ef4444;
+            --red-lt:    rgba(239,68,68,0.15);
+            --red-bd:    rgba(239,68,68,0.3);
+        }
+
+        body {
+            font-family: 'Instrument Sans', sans-serif;
+            background: var(--bg);
+            color: var(--ink);
+            min-height: 100vh;
+            display: flex;
+        }
+
+        /* ── SIDEBAR (shared styles) ── */
+        .admin-sidebar {
+            width: var(--sidebar-w);
+            flex-shrink: 0;
+            background: var(--sidebar);
+            border-right: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            position: fixed;
+            top: 0; left: 0; bottom: 0;
+            z-index: 100;
+        }
+
+        .as-logo { padding: 1.4rem 1.2rem 1.2rem; border-bottom: 1px solid var(--border); }
+        .as-logo-link { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+        .as-logo-mark { width: 34px; height: 34px; background: var(--accent); border-radius: 9px; display: flex; align-items: center; justify-content: center; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; font-size: 1rem; color: #fff; flex-shrink: 0; }
+        .as-brand { font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 1rem; color: var(--ink); letter-spacing: -0.02em; }
+        .as-role { font-size: 0.68rem; color: var(--ink-3); margin-top: 1px; }
+        .as-nav { flex: 1; padding: 1rem 0.7rem; overflow-y: auto; }
+        .as-section-label { font-size: 0.62rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-3); padding: 0.8rem 0.6rem 0.4rem; }
+        .as-item { display: flex; align-items: center; gap: 9px; padding: 0.52rem 0.75rem; border-radius: 8px; font-size: 0.84rem; font-weight: 500; color: var(--ink-2); text-decoration: none; transition: background 0.12s, color 0.12s; margin-bottom: 2px; }
+        .as-item:hover { background: rgba(255,255,255,0.05); color: var(--ink); }
+        .as-active { background: var(--accent-lt) !important; color: var(--green) !important; font-weight: 600; }
+        .as-icon { width: 15px; height: 15px; flex-shrink: 0; }
+        .as-footer { padding: 0.9rem 1rem; border-top: 1px solid var(--border); display: flex; flex-direction: column; gap: 0.3rem; }
+        .as-footer-link, .as-logout { display: flex; align-items: center; gap: 8px; padding: 0.5rem 0.6rem; border-radius: 7px; font-size: 0.8rem; color: var(--ink-3); text-decoration: none; transition: background 0.12s, color 0.12s; }
+        .as-footer-link:hover { background: rgba(255,255,255,0.05); color: var(--ink-2); }
+        .as-logout:hover { background: rgba(239,68,68,0.1); color: #fca5a5; }
+
+        /* ── MAIN ── */
+        .admin-main { margin-left: var(--sidebar-w); flex: 1; display: flex; flex-direction: column; min-height: 100vh; }
+
+        .admin-topbar { height: 58px; padding: 0 2rem; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--border); background: var(--sidebar); position: sticky; top: 0; z-index: 50; }
+        .topbar-title { font-family: 'Bricolage Grotesque', sans-serif; font-size: 1rem; font-weight: 700; color: var(--ink); letter-spacing: -0.02em; }
+        .topbar-right { display: flex; align-items: center; gap: 1rem; }
+        .admin-tag { display: flex; align-items: center; gap: 6px; font-size: 0.78rem; color: var(--ink-3); }
+        .admin-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--green); animation: pulse 2s infinite; }
+        @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.4;transform:scale(0.7)} }
+
+        .admin-body { padding: 2rem; flex: 1; }
+
+        .page-heading { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 1.8rem; }
+        .page-title { font-family: 'Bricolage Grotesque', sans-serif; font-size: 1.4rem; font-weight: 800; color: var(--ink); letter-spacing: -0.03em; }
+        .page-subtitle { font-size: 0.84rem; color: var(--ink-3); margin-top: 0.3rem; }
+
+        .total-badge {
+            background: var(--surface);
+            border: 1px solid var(--border-md);
+            border-radius: 8px;
+            padding: 0.4rem 0.85rem;
+            font-size: 0.8rem;
+            color: var(--ink-3);
+        }
+
+        .total-badge strong { color: var(--ink); }
+
+        /* SEARCH */
+        .search-row {
+            margin-bottom: 1.2rem;
+        }
+
+        .search-input {
+            width: 100%;
+            max-width: 340px;
+            padding: 0.62rem 1rem 0.62rem 2.4rem;
+            background: var(--surface);
+            border: 1px solid var(--border-md);
+            border-radius: 9px;
+            font-family: 'Instrument Sans', sans-serif;
+            font-size: 0.85rem;
+            color: var(--ink);
+            outline: none;
+            transition: border-color 0.15s;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 14 14' fill='none'%3E%3Ccircle cx='6' cy='6' r='4.5' stroke='%236b6860' stroke-width='1.3'/%3E%3Cpath d='M9.5 9.5L12 12' stroke='%236b6860' stroke-width='1.3' stroke-linecap='round'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: 0.75rem center;
+        }
+
+        .search-input:focus { border-color: var(--accent); }
+        .search-input::placeholder { color: var(--ink-3); }
+
+        /* TABLE CARD */
+        .table-card { background: var(--surface); border: 1px solid var(--border-md); border-radius: 13px; overflow: hidden; }
+
+        .data-table { width: 100%; border-collapse: collapse; }
+
+        .data-table th { padding: 0.65rem 1.3rem; font-size: 0.65rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.07em; color: var(--ink-3); text-align: left; background: rgba(255,255,255,0.02); border-bottom: 1px solid var(--border); white-space: nowrap; }
+
+        .data-table td { padding: 0.85rem 1.3rem; font-size: 0.83rem; color: var(--ink); vertical-align: middle; border-bottom: 1px solid var(--border); }
+
+        .data-table tbody tr:last-child td { border-bottom: none; }
+        .data-table tbody tr:hover td { background: rgba(255,255,255,0.025); }
+
+        /* CELLS */
+        .user-cell { display: flex; align-items: center; gap: 10px; }
+
+        .user-avatar {
+            width: 32px; height: 32px; border-radius: 50%;
+            background: var(--accent); color: #fff;
+            font-size: 0.8rem; font-weight: 700;
+            display: flex; align-items: center; justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .user-name { font-size: 0.84rem; font-weight: 600; color: var(--ink); }
+        .user-email-text { font-size: 0.74rem; color: var(--ink-3); }
+
+        .gender-badge {
+            display: inline-block;
+            padding: 2px 9px;
+            border-radius: 20px;
+            font-size: 0.72rem;
+            font-weight: 600;
+            background: rgba(255,255,255,0.06);
+            color: var(--ink-2);
+        }
+
+        .muted { color: var(--ink-3); font-size: 0.81rem; }
+
+        /* ACTIONS */
+        .action-cell { display: flex; align-items: center; gap: 0.5rem; }
+
+        .btn-view {
+            padding: 4px 12px;
+            border-radius: 7px;
+            font-size: 0.78rem;
+            font-weight: 500;
+            color: var(--green);
+            background: var(--accent-lt);
+            text-decoration: none;
+            border: 1px solid rgba(47,107,62,0.25);
+            transition: background 0.12s;
+            white-space: nowrap;
+        }
+
+        .btn-view:hover { background: rgba(47,107,62,0.28); }
+
+        .btn-delete {
+            padding: 4px 10px;
+            border-radius: 7px;
+            font-size: 0.78rem;
+            font-weight: 500;
+            color: #fca5a5;
+            background: var(--red-lt);
+            border: 1px solid var(--red-bd);
+            cursor: pointer;
+            font-family: inherit;
+            transition: background 0.12s;
+            white-space: nowrap;
+        }
+
+        .btn-delete:hover { background: rgba(239,68,68,0.25); }
+
+        /* EMPTY */
+        .empty-row td { text-align: center; padding: 3rem !important; color: var(--ink-3); font-size: 0.85rem; }
+
+        /* CONFIRM OVERLAY */
+        .confirm-overlay {
+            position: fixed; inset: 0;
+            background: rgba(0,0,0,0.7);
+            backdrop-filter: blur(4px);
+            display: flex; align-items: center; justify-content: center;
+            z-index: 1000;
+            opacity: 0; visibility: hidden;
+            transition: opacity 0.2s, visibility 0.2s;
+        }
+
+        .confirm-overlay.open { opacity: 1; visibility: visible; }
+
+        .confirm-box {
+            background: var(--surface);
+            border: 1px solid var(--border-md);
+            border-radius: 14px;
+            padding: 1.8rem;
+            max-width: 380px;
+            width: calc(100% - 2rem);
+            box-shadow: 0 24px 64px rgba(0,0,0,0.5);
+            transform: translateY(8px);
+            transition: transform 0.2s;
+        }
+
+        .confirm-overlay.open .confirm-box { transform: translateY(0); }
+
+        .confirm-icon { font-size: 2rem; margin-bottom: 1rem; }
+        .confirm-title { font-family: 'Bricolage Grotesque', sans-serif; font-size: 1.1rem; font-weight: 700; color: var(--ink); margin-bottom: 0.5rem; }
+        .confirm-text { font-size: 0.85rem; color: var(--ink-3); margin-bottom: 1.5rem; line-height: 1.5; }
+        .confirm-email { color: var(--ink-2); font-weight: 600; }
+
+        .confirm-actions { display: flex; gap: 0.7rem; }
+
+        .btn-cancel-confirm {
+            flex: 1; padding: 0.75rem;
+            background: var(--surface-2);
+            border: 1px solid var(--border-md);
+            border-radius: 9px;
+            font-family: inherit; font-size: 0.87rem; font-weight: 600;
+            color: var(--ink-2); cursor: pointer;
+            transition: background 0.12s;
+        }
+
+        .btn-cancel-confirm:hover { background: rgba(255,255,255,0.08); }
+
+        .btn-confirm-delete {
+            flex: 1; padding: 0.75rem;
+            background: var(--red);
+            border: none; border-radius: 9px;
+            font-family: inherit; font-size: 0.87rem; font-weight: 600;
+            color: #fff; cursor: pointer;
+            transition: background 0.12s;
+        }
+
+        .btn-confirm-delete:hover { background: #dc2626; }
+
+        @media (max-width: 700px) {
+            .admin-sidebar { display: none; }
+            .admin-main { margin-left: 0; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<div th:replace="fragments/admin-nav :: adminNav('users')"></div>
+
+<div class="admin-main">
+
+    <!-- TOP BAR -->
+    <div class="admin-topbar">
+        <div class="topbar-title">User Management</div>
+        <div class="topbar-right">
+            <div class="admin-tag">
+                <span class="admin-dot"></span>
+                <span th:text="${session.admin?.username}">admin</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- BODY -->
+    <div class="admin-body">
+
+        <div class="page-heading">
+            <div>
+                <div class="page-title">All Users</div>
+                <div class="page-subtitle">Manage registered accounts on the platform.</div>
+            </div>
+            <div class="total-badge">
+                <strong th:text="${users.size()}">0</strong> registered
+            </div>
+        </div>
+
+        <!-- SEARCH -->
+        <div class="search-row">
+            <input type="text" class="search-input" id="searchInput"
+                   placeholder="Search by name or email…" oninput="filterUsers()">
+        </div>
+
+        <!-- TABLE -->
+        <div class="table-card">
+            <table class="data-table" id="usersTable">
+                <thead>
+                    <tr>
+                        <th>User</th>
+                        <th>Age</th>
+                        <th>Gender</th>
+                        <th>Height</th>
+                        <th>Weight</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="u : ${users}"
+                        th:attr="data-name=${u.name.toLowerCase()}, data-email=${u.email.toLowerCase()}">
+                        <td>
+                            <div class="user-cell">
+                                <div class="user-avatar"
+                                     th:text="${u.name.substring(0,1).toUpperCase()}">A</div>
+                                <div>
+                                    <div class="user-name" th:text="${u.name}">Name</div>
+                                    <div class="user-email-text" th:text="${u.email}">email</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="muted" th:text="${u.age} + ' yrs'">—</td>
+                        <td>
+                            <span class="gender-badge" th:text="${u.gender}">—</span>
+                        </td>
+                        <td class="muted" th:text="${u.height} + ' cm'">—</td>
+                        <td class="muted" th:text="${u.weight} + ' kg'">—</td>
+                        <td>
+                            <div class="action-cell">
+                                <a th:href="@{/admin/users/detail(email=${u.email})}"
+                                   class="btn-view">View</a>
+                                <button class="btn-delete"
+                                        th:attr="onclick='confirmDelete(\'' + ${u.email} + '\', \'' + ${u.name} + '\')'"
+                                        type="button">Delete</button>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr class="empty-row" th:if="${users.isEmpty()}">
+                        <td colspan="6">No users registered yet.</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+</div>
+
+<!-- DELETE CONFIRM MODAL -->
+<div class="confirm-overlay" id="confirmOverlay">
+    <div class="confirm-box">
+        <div class="confirm-icon">⚠️</div>
+        <div class="confirm-title">Delete User Account?</div>
+        <div class="confirm-text">
+            This will permanently delete the account for
+            <span class="confirm-email" id="confirmName">—</span>
+            and all associated workouts and goals. This action cannot be undone.
+        </div>
+        <div class="confirm-actions">
+            <button class="btn-cancel-confirm" onclick="closeConfirm()">Cancel</button>
+            <form id="deleteForm" action="/admin/users/delete" method="post" style="flex:1;">
+                <input type="hidden" name="email" id="deleteEmailInput">
+                <button type="submit" class="btn-confirm-delete" style="width:100%;">Delete</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    function confirmDelete(email, name) {
+        document.getElementById('confirmName').textContent = name + ' (' + email + ')';
+        document.getElementById('deleteEmailInput').value = email;
+        document.getElementById('confirmOverlay').classList.add('open');
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closeConfirm() {
+        document.getElementById('confirmOverlay').classList.remove('open');
+        document.body.style.overflow = '';
+    }
+
+    document.getElementById('confirmOverlay').addEventListener('click', function(e) {
+        if (e.target === this) closeConfirm();
+    });
+
+    function filterUsers() {
+        const q = document.getElementById('searchInput').value.toLowerCase();
+        document.querySelectorAll('#usersTable tbody tr[data-name]').forEach(row => {
+            const name  = row.dataset.name  || '';
+            const email = row.dataset.email || '';
+            row.style.display = (name.includes(q) || email.includes(q)) ? '' : 'none';
+        });
+    }
+</script>
+
+</body>
+</html>

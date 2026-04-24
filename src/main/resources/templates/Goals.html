@@ -1,281 +1,498 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
 <head>
-    <title>My Goals | FitTrack</title>
-
-    <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;800&family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Goals — FitTrack</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/css/styles.css">
 
     <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        :root {
+            --accent:    #2f6b3e;
+            --accent-dk: #1e4a2b;
+            --accent-lt: #e8f2eb;
+            --accent-md: #c5dfc9;
+            --ink:       #1a1916;
+            --ink-2:     #4a4840;
+            --ink-3:     #8a877f;
+            --bg:        #f5f5f3;
+            --surface:   #ffffff;
+            --border:    rgba(26,25,22,0.08);
+            --border-md: rgba(26,25,22,0.12);
+            --orange:    #e8520a;
+            --orange-lt: #fef0e8;
+            --blue:      #2563eb;
+            --blue-lt:   #eff6ff;
+            --teal:      #0d9488;
+            --teal-lt:   #f0fdfa;
+        }
+
         body {
-            margin: 0;
             font-family: 'Instrument Sans', sans-serif;
-            background: linear-gradient(135deg, #f5f7fa, #e4efe9);
+            background: var(--bg);
+            color: var(--ink);
+            min-height: 100vh;
         }
 
-        .container {
-            padding: 30px;
-            max-width: 950px;
-            margin: auto;
+        .page-wrap {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 2rem 2rem 4rem;
         }
 
-        h2 {
-            font-family: 'Bricolage Grotesque';
-            margin-bottom: 25px;
-            font-size: 26px;
+        /* PAGE HEADER */
+        .page-header {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            margin-bottom: 2rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid var(--border);
         }
 
-        /* 🔥 MODERN CARD */
+        .page-title {
+            font-family: 'Bricolage Grotesque', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: var(--ink);
+            letter-spacing: -0.03em;
+        }
+
+        .page-subtitle { margin-top: 0.3rem; font-size: 0.85rem; color: var(--ink-3); }
+
+        .btn-new {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: var(--accent);
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            padding: 0.52rem 1.1rem;
+            font-family: 'Instrument Sans', sans-serif;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            transition: background 0.15s;
+        }
+
+        .btn-new:hover { background: var(--accent-dk); }
+
+        /* SUMMARY BAR */
+        .summary-bar {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+            margin-bottom: 1.8rem;
+        }
+
+        .sum-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1rem 1.2rem;
+            display: flex;
+            align-items: center;
+            gap: 0.9rem;
+        }
+
+        .sum-icon {
+            width: 36px; height: 36px;
+            border-radius: 10px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1rem;
+            flex-shrink: 0;
+        }
+
+        .si-lt { background: var(--accent-lt); }
+        .si-bl { background: var(--blue-lt); }
+        .si-tl { background: var(--teal-lt); }
+
+        .sum-value {
+            font-family: 'Bricolage Grotesque', sans-serif;
+            font-size: 1.4rem;
+            font-weight: 800;
+            color: var(--ink);
+            letter-spacing: -0.03em;
+            line-height: 1;
+        }
+
+        .sum-label { font-size: 0.75rem; color: var(--ink-3); margin-top: 0.2rem; }
+
+        /* GOALS GRID */
+        .goals-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.2rem;
+        }
+
+        /* GOAL CARD */
         .goal-card {
-            background: rgba(255, 255, 255, 0.7);
-            backdrop-filter: blur(12px);
-            padding: 22px;
-            border-radius: 18px;
-            margin-bottom: 22px;
-            box-shadow: 0 8px 30px rgba(0,0,0,0.08);
-            transition: all 0.3s ease;
-            border: 1px solid rgba(255,255,255,0.3);
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            overflow: hidden;
+            transition: box-shadow 0.2s, transform 0.2s;
+            position: relative;
         }
 
         .goal-card:hover {
-            transform: translateY(-6px);
-            box-shadow: 0 15px 40px rgba(0,0,0,0.12);
+            box-shadow: 0 8px 28px rgba(26,25,22,0.1);
+            transform: translateY(-2px);
         }
 
-        .goal-header {
+        .goal-card-accent {
+            height: 4px;
+        }
+
+        .gc-active   { background: var(--accent); }
+        .gc-complete { background: var(--teal); }
+        .gc-weight   { background: var(--orange); }
+        .gc-calorie  { background: #f59e0b; }
+        .gc-workout  { background: var(--blue); }
+
+        .goal-card-body { padding: 1.3rem; }
+
+        /* GOAL HEADER */
+        .goal-card-head {
             display: flex;
+            align-items: flex-start;
             justify-content: space-between;
+            margin-bottom: 1.1rem;
+        }
+
+        .goal-type-icon {
+            width: 38px; height: 38px;
+            border-radius: 10px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1rem;
+            flex-shrink: 0;
+        }
+
+        .status-badge {
+            display: inline-flex;
             align-items: center;
-        }
-
-        .goal-title {
-            font-weight: 700;
-            font-size: 17px;
-        }
-
-        .status {
-            padding: 5px 12px;
+            gap: 4px;
+            padding: 3px 9px;
             border-radius: 20px;
-            font-size: 12px;
-            font-weight: 600;
-        }
-
-        .active {
-            background: #e8f5e9;
-            color: #2f6b3e;
-        }
-
-        .completed {
-            background: #e0f7fa;
-            color: #00796b;
-        }
-
-        .goal-info {
-            margin-top: 10px;
-            font-size: 14px;
-            color: #555;
-        }
-
-        /* 🔥 RINGS */
-        .rings {
-            position: relative;
-            width: 100px;
-            height: 100px;
-        }
-
-        .ring {
-            position: absolute;
-            border-radius: 50%;
-        }
-
-        .ring.outer {
-            width: 100px;
-            height: 100px;
-            background: conic-gradient(#2f6b3e var(--p), #eee 0);
-            animation: fillAnim 1.2s ease;
-            box-shadow: 0 0 12px rgba(47,107,62,0.4);
-        }
-
-        .ring.inner {
-            width: 70px;
-            height: 70px;
-            top: 15px;
-            left: 15px;
-            background: conic-gradient(#38bdf8 var(--p2), #ddd 0);
-            animation: fillAnim 1.2s ease;
-        }
-
-        .ring::before {
-            content: "";
-            position: absolute;
-            inset: 10px;
-            background: white;
-            border-radius: 50%;
-            box-shadow: inset 0 0 10px rgba(0,0,0,0.05);
-        }
-
-        .ring span {
-            position: absolute;
-            inset: 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 13px;
+            font-size: 0.7rem;
             font-weight: 700;
-            color: #2f6b3e;
-            z-index: 2;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
         }
 
-        @keyframes fillAnim {
-            from {
-                transform: scale(0.85);
-                opacity: 0.6;
-            }
-            to {
-                transform: scale(1);
-                opacity: 1;
-            }
+        .sb-active    { background: var(--accent-lt); color: var(--accent); }
+        .sb-completed { background: var(--teal-lt); color: var(--teal); }
+
+        .status-dot {
+            width: 5px; height: 5px;
+            border-radius: 50%;
         }
 
-        /* 🔥 PROGRESS */
-        .goal-progress-container {
+        .sd-active    { background: var(--accent); }
+        .sd-completed { background: var(--teal); }
+
+        .goal-name {
+            font-family: 'Bricolage Grotesque', sans-serif;
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--ink);
+            letter-spacing: -0.02em;
+            margin-bottom: 0.2rem;
+        }
+
+        .goal-sub { font-size: 0.78rem; color: var(--ink-3); }
+
+        /* PROGRESS SECTION */
+        .progress-section { margin: 1.1rem 0; }
+
+        .progress-numbers {
+            display: flex;
+            align-items: baseline;
+            gap: 0.4rem;
+            margin-bottom: 0.6rem;
+        }
+
+        .prog-current {
+            font-family: 'Bricolage Grotesque', sans-serif;
+            font-size: 1.6rem;
+            font-weight: 800;
+            color: var(--ink);
+            letter-spacing: -0.04em;
+            line-height: 1;
+        }
+
+        .prog-sep { font-size: 0.85rem; color: var(--ink-3); }
+
+        .prog-target {
+            font-family: 'Bricolage Grotesque', sans-serif;
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--ink-3);
+        }
+
+        .prog-pct {
+            margin-left: auto;
+            font-family: 'Bricolage Grotesque', sans-serif;
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: var(--accent);
+        }
+
+        .prog-bar-track {
+            height: 7px;
+            border-radius: 7px;
+            background: #eeede9;
+            overflow: hidden;
+        }
+
+        .prog-bar-fill {
+            height: 100%;
+            border-radius: 7px;
+            transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .pf-green  { background: var(--accent); }
+        .pf-teal   { background: var(--teal); }
+        .pf-orange { background: var(--orange); }
+        .pf-amber  { background: #f59e0b; }
+        .pf-blue   { background: var(--blue); }
+
+        /* EXTRA PROGRESS */
+        .extra-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            margin-top: 0.6rem;
+            background: #f0fdf4;
+            border: 1px solid #bbf7d0;
+            color: #16a34a;
+            font-size: 0.75rem;
+            font-weight: 600;
+            padding: 3px 9px;
+            border-radius: 20px;
+        }
+
+        /* GOAL META */
+        .goal-meta {
             display: flex;
             align-items: center;
-            gap: 22px;
-            margin-top: 18px;
+            gap: 1.2rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--border);
+            margin-top: 1rem;
         }
 
-        .progress-details {
-            font-size: 15px;
-            font-weight: 500;
+        .meta-item { display: flex; align-items: center; gap: 5px; font-size: 0.76rem; color: var(--ink-3); }
+
+        .goal-notes {
+            margin-top: 0.7rem;
+            padding: 0.65rem 0.85rem;
+            background: #fafaf8;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            font-size: 0.78rem;
+            color: var(--ink-2);
+            line-height: 1.55;
+            font-style: italic;
         }
 
-        .progress-details strong {
-            font-size: 18px;
-            color: #2f6b3e;
-        }
-
-        .extra {
-            font-size: 12px;
-            color: #16a34a;
-            margin-top: 5px;
-            font-weight: 600;
-        }
-
-        /* EMPTY */
-        .empty-box {
+        /* EMPTY STATE */
+        .empty-state {
+            grid-column: 1 / -1;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 4rem 2rem;
             text-align: center;
-            padding: 50px;
-            background: rgba(255,255,255,0.7);
-            backdrop-filter: blur(10px);
-            border-radius: 18px;
         }
 
-        .btn-main {
-            margin-top: 15px;
-            background: linear-gradient(135deg, #2f6b3e, #4ade80);
-            color: white;
-            border: none;
-            padding: 10px 18px;
-            border-radius: 12px;
-            cursor: pointer;
-            font-weight: 600;
-            transition: 0.3s;
+        .empty-icon-wrap {
+            width: 64px; height: 64px;
+            border-radius: 50%;
+            background: var(--accent-lt);
+            display: flex; align-items: center; justify-content: center;
+            margin: 0 auto 1.2rem;
+            font-size: 1.5rem;
         }
 
-        .btn-main:hover {
-            transform: scale(1.05);
-            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        .empty-title {
+            font-family: 'Bricolage Grotesque', sans-serif;
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--ink);
+            margin-bottom: 0.5rem;
+        }
+
+        .empty-text { font-size: 0.87rem; color: var(--ink-3); margin-bottom: 1.5rem; }
+
+        @media (max-width: 680px) {
+            .goals-grid  { grid-template-columns: 1fr; }
+            .summary-bar { grid-template-columns: 1fr; }
+            .page-header { flex-direction: column; gap: 0.8rem; }
         }
     </style>
 </head>
-
 <body>
 
-<!-- ✅ HEADER (UNCHANGED) -->
-<div th:replace="~{fragments/navbar :: navbar('goals')}"></div>
+<div th:replace="fragments/navbar :: navbar('goals')"></div>
 
-<div class="container">
+<div class="page-wrap">
 
-    <h2>🎯 My Goals</h2>
-
-    <div th:if="${goals != null and !#lists.isEmpty(goals)}">
-
-        <div th:each="g : ${goals}" class="goal-card">
-
-            <!-- HEADER -->
-            <div class="goal-header">
-                <div class="goal-title"
-                     th:text="${g.goalType.toString().replace('_',' ')}"></div>
-
-                <div class="status"
-                     th:classappend="${g.status == 'ACTIVE'} ? ' active' : ' completed'"
-                     th:text="${g.status}"></div>
-            </div>
-
-            <!-- 🔥 PROGRESS -->
-            <div class="goal-progress-container">
-
-                <div class="rings"
-                     th:with="
-                     p=${g.targetValue == 0 ? 0 : (g.currentValue * 100.0 / g.targetValue)},
-                     safe=${p > 100 ? 100 : p},
-                     extra=${p > 100 ? p - 100 : 0}">
-
-                    <!-- OUTER -->
-                    <div class="ring outer"
-                         th:style="'--p:' + ${safe} + '%'">
-                        <span th:text="${#numbers.formatDecimal(safe,0,0)} + '%'"></span>
-                    </div>
-
-                    <!-- INNER -->
-                    <div class="ring inner"
-                         th:if="${extra > 0}"
-                         th:style="'--p2:' + (${extra > 100 ? 100 : extra}) + '%'">
-                    </div>
-
-                </div>
-
-                <!-- DETAILS -->
-                <div class="progress-details">
-                    <div>
-                        <strong th:text="${g.currentValue}"></strong>
-                        <span style="color:#888;"> of </span>
-                        <span th:text="${g.targetValue}"></span>
-                    </div>
-
-                    <div class="extra" th:if="${g.currentValue > g.targetValue}">
-                        🎉 Extra Progress!
-                    </div>
-                </div>
-
-            </div>
-
-            <!-- DATES -->
-            <div class="goal-info">
-                📅 <span th:text="${g.startDate}"></span>
-                → <span th:text="${g.endDate}"></span>
-            </div>
-
-            <!-- NOTES -->
-            <div class="goal-info"
-                 th:if="${g.notes != null and g.notes != ''}">
-                📝 <span th:text="${g.notes}"></span>
-            </div>
-
+    <!-- PAGE HEADER -->
+    <div class="page-header">
+        <div>
+            <div class="page-title">My Goals</div>
+            <div class="page-subtitle">Track your fitness targets and measure your progress.</div>
         </div>
-
-    </div>
-
-    <!-- EMPTY -->
-    <div th:if="${goals == null or #lists.isEmpty(goals)}" class="empty-box">
-        <p>No goals set yet 🎯</p>
-
-        <a href="/dashboard/setGoal">
-            <button class="btn-main">Set Your First Goal</button>
+        <a href="/dashboard/setGoal" class="btn-new">
+            <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+                <path d="M6 1v10M1 6h10" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+            </svg>
+            New Goal
         </a>
     </div>
 
+    <!-- SUMMARY BAR -->
+    <div class="summary-bar" th:if="${goals != null and !goals.isEmpty()}">
+        <div class="sum-card">
+            <div class="sum-icon si-lt">🎯</div>
+            <div>
+                <div class="sum-value" th:text="${#lists.size(goals)}">0</div>
+                <div class="sum-label">Total goals</div>
+            </div>
+        </div>
+        <div class="sum-card">
+            <div class="sum-icon si-bl">⚡</div>
+            <div>
+                <div class="sum-value"
+                     th:text="${#lists.size(goals.?[status == 'ACTIVE'])}">0</div>
+                <div class="sum-label">Active goals</div>
+            </div>
+        </div>
+        <div class="sum-card">
+            <div class="sum-icon si-tl">✅</div>
+            <div>
+                <div class="sum-value"
+                     th:text="${#lists.size(goals.?[status == 'COMPLETED'])}">0</div>
+                <div class="sum-label">Completed</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- GOALS GRID -->
+    <div class="goals-grid">
+
+        <!-- POPULATED GOALS -->
+        <div th:if="${goals != null and !goals.isEmpty()}"
+             th:each="g : ${goals}"
+             class="goal-card">
+
+            <!-- Accent stripe -->
+            <div class="goal-card-accent"
+                 th:classappend="${g.status == 'COMPLETED'} ? 'gc-complete' :
+                                 (${g.goalType.name() == 'WEIGHT_LOSS'} ? 'gc-weight' :
+                                 (${g.goalType.name() == 'CALORIE_BURN'} ? 'gc-calorie' :
+                                 (${g.goalType.name() == 'WORKOUTS'} ? 'gc-workout' : 'gc-active')))">
+            </div>
+
+            <div class="goal-card-body"
+                 th:with="pct=${g.targetValue == 0 ? 0 : (g.currentValue * 100.0 / g.targetValue)},
+                           safePct=${pct > 100 ? 100 : pct},
+                           extraPct=${pct > 100 ? pct - 100 : 0}">
+
+                <!-- Header row -->
+                <div class="goal-card-head">
+                    <div style="display:flex;align-items:center;gap:10px;">
+                        <div class="goal-type-icon"
+                             th:style="${g.goalType.name() == 'WEIGHT_LOSS'} ? 'background:#fef0e8' :
+                                       (${g.goalType.name() == 'WEIGHT_GAIN'} ? 'background:#e8f2eb' :
+                                       (${g.goalType.name() == 'CALORIE_BURN'} ? 'background:#fef9e8' :
+                                       'background:#eff6ff'))">
+                            <span th:text="${g.goalType.name() == 'WEIGHT_LOSS'} ? '⚖️' :
+                                          (${g.goalType.name() == 'WEIGHT_GAIN'} ? '💪' :
+                                          (${g.goalType.name() == 'CALORIE_BURN'} ? '🔥' : '🏋️'))">🎯</span>
+                        </div>
+                        <div>
+                            <div class="goal-name"
+                                 th:text="${g.goalType.toString().replace('_',' ')}">Goal</div>
+                            <div class="goal-sub"
+                                 th:text="'Target: ' + ${g.targetValue} +
+                                          (${g.goalType.name() == 'WEIGHT_LOSS' or g.goalType.name() == 'WEIGHT_GAIN'} ? ' kg' :
+                                          (${g.goalType.name() == 'CALORIE_BURN'} ? ' kcal' : ' sessions'))">
+                            </div>
+                        </div>
+                    </div>
+                    <span class="status-badge"
+                          th:classappend="${g.status == 'ACTIVE'} ? 'sb-active' : 'sb-completed'">
+                        <span class="status-dot"
+                              th:classappend="${g.status == 'ACTIVE'} ? 'sd-active' : 'sd-completed'"></span>
+                        <span th:text="${g.status}">ACTIVE</span>
+                    </span>
+                </div>
+
+                <!-- Progress numbers -->
+                <div class="progress-section">
+                    <div class="progress-numbers">
+                        <span class="prog-current" th:text="${g.currentValue}">0</span>
+                        <span class="prog-sep">/</span>
+                        <span class="prog-target" th:text="${g.targetValue}">0</span>
+                        <span class="prog-pct"
+                              th:text="${#numbers.formatDecimal(safePct, 0, 0)} + '%'">0%</span>
+                    </div>
+                    <div class="prog-bar-track">
+                        <div class="prog-bar-fill"
+                             th:classappend="${g.status == 'COMPLETED'} ? 'pf-teal' :
+                                            (${g.goalType.name() == 'WEIGHT_LOSS'} ? 'pf-orange' :
+                                            (${g.goalType.name() == 'CALORIE_BURN'} ? 'pf-amber' :
+                                            (${g.goalType.name() == 'WORKOUTS'} ? 'pf-blue' : 'pf-green')))"
+                             th:style="'width:' + ${safePct} + '%'"></div>
+                    </div>
+                    <div class="extra-badge" th:if="${extraPct > 0}">
+                        🎉 +<span th:text="${#numbers.formatDecimal(extraPct, 0, 0)}">0</span>% over target!
+                    </div>
+                </div>
+
+                <!-- Meta -->
+                <div class="goal-meta">
+                    <div class="meta-item">
+                        <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+                            <rect x="1" y="2" width="10" height="9" rx="1.5" stroke="#8a877f" stroke-width="1.2"/>
+                            <path d="M4 1v2M8 1v2M1 5h10" stroke="#8a877f" stroke-width="1.2" stroke-linecap="round"/>
+                        </svg>
+                        <span th:text="${g.startDate}">Start</span>
+                    </div>
+                    <div class="meta-item">
+                        <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+                            <path d="M6 2v4l2.5 2.5" stroke="#8a877f" stroke-width="1.2" stroke-linecap="round"/>
+                            <circle cx="6" cy="6" r="5" stroke="#8a877f" stroke-width="1.2" fill="none"/>
+                        </svg>
+                        <span th:text="${g.endDate}">End</span>
+                    </div>
+                </div>
+
+                <!-- Notes -->
+                <div class="goal-notes"
+                     th:if="${g.notes != null and g.notes != ''}"
+                     th:text="${g.notes}"></div>
+
+            </div>
+        </div>
+
+        <!-- EMPTY STATE -->
+        <div class="empty-state" th:if="${goals == null or goals.isEmpty()}">
+            <div class="empty-icon-wrap">🎯</div>
+            <div class="empty-title">No goals set yet</div>
+            <div class="empty-text">Define a fitness target and start tracking your progress toward it.</div>
+            <a href="/dashboard/setGoal" class="btn-new">Set Your First Goal</a>
+        </div>
+
+    </div>
 </div>
 
 </body>

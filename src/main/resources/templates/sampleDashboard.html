@@ -1,501 +1,800 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
 <head>
-    <title>Dashboard | FitTrack</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-	<link rel="stylesheet" href="/css/styles.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard — FitTrack</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/css/styles.css">
 
     <style>
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
+        :root {
+            --accent:     #2f6b3e;
+            --accent-dk:  #1e4a2b;
+            --accent-lt:  #e8f2eb;
+            --accent-md:  #c5dfc9;
+            --ink:        #1a1916;
+            --ink-2:      #4a4840;
+            --ink-3:      #8a877f;
+            --bg:         #f5f5f3;
+            --surface:    #ffffff;
+            --border:     rgba(26,25,22,0.08);
+            --border-md:  rgba(26,25,22,0.12);
+            --orange:     #e8520a;
+            --orange-lt:  #fef0e8;
+            --blue:       #2563eb;
+            --blue-lt:    #eff6ff;
+        }
+
         body {
-            background: #f4f6f3;
-            font-family: 'Segoe UI', sans-serif;
-            color: #1a1916;
+            font-family: 'Instrument Sans', sans-serif;
+            background: var(--bg);
+            color: var(--ink);
             min-height: 100vh;
         }
 
-        /* BG BLOBS */
-        .ft-bg {
-            position: fixed; inset: 0; pointer-events: none; z-index: 0; overflow: hidden;
-        }
-        .ft-blob1 {
-            position: absolute; top: -100px; right: -140px;
-            width: 560px; height: 460px; border-radius: 50%;
-            background: radial-gradient(ellipse, rgba(26,92,53,0.08) 0%, transparent 70%);
-        }
-        .ft-blob2 {
-            position: absolute; bottom: 80px; left: -100px;
-            width: 420px; height: 360px; border-radius: 50%;
-            background: radial-gradient(ellipse, rgba(26,92,53,0.05) 0%, transparent 70%);
+        /* ── PAGE LAYOUT ── */
+        .page-wrap {
+            max-width: 1160px;
+            margin: 0 auto;
+            padding: 2rem 2rem 4rem;
         }
 
-        /* NAVBAR */
-        .ft-nav {
-            background: rgba(244,246,243,0.92);
-            backdrop-filter: blur(12px);
-            border-bottom: 0.5px solid rgba(0,0,0,0.07);
-            padding: 14px 32px;
-            display: flex; align-items: center; justify-content: space-between;
-            position: sticky; top: 0; z-index: 100;
-        }
-        .ft-logo {
-            display: flex; align-items: center; gap: 9px;
-            font-weight: 600; font-size: 17px; color: #1a1916; text-decoration: none;
-        }
-        .ft-logo-icon {
-            width: 32px; height: 32px; border-radius: 9px;
-            background: #1a5c35; display: flex; align-items: center; justify-content: center;
-        }
-        .ft-logo-icon svg { width: 17px; height: 17px; }
-        .ft-nav-right { display: flex; align-items: center; gap: 10px; }
-        .btn-ghost {
-            background: transparent;
-            border: 0.5px solid rgba(0,0,0,0.15);
-            border-radius: 30px; padding: 7px 18px;
-            font-size: 13px; color: #555; cursor: pointer;
-            text-decoration: none; display: inline-block;
-        }
-        .btn-ghost:hover { background: rgba(0,0,0,0.04); color: #1a1916; }
-        .btn-main {
-            background: #1a5c35; color: white; border: none;
-            border-radius: 30px; padding: 8px 20px;
-            font-size: 13px; font-weight: 500; cursor: pointer;
-            display: inline-flex; align-items: center; gap: 6px;
-        }
-        .btn-main:hover { background: #14472a; color: white; }
-
-        /* LAYOUT */
-        .ft-page {
-            position: relative; z-index: 1;
-            max-width: 1100px; margin: 0 auto;
-            padding: 34px 28px 60px;
+        /* ── PAGE HEADER ── */
+        .page-header {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            margin-bottom: 2rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid var(--border);
         }
 
-        /* HEADER */
-        .ft-header {
-            display: flex; align-items: flex-start; justify-content: space-between;
-            margin-bottom: 28px;
-        }
-        .ft-greeting { font-size: 22px; font-weight: 600; color: #1a1916; margin-bottom: 4px; }
-        .ft-subtext { font-size: 14px; color: #888; }
-        .ft-date-badge {
-            background: white; border: 0.5px solid rgba(0,0,0,0.08);
-            border-radius: 20px; padding: 6px 14px;
-            font-size: 12px; color: #888; white-space: nowrap;
+        .page-title {
+            font-family: 'Bricolage Grotesque', sans-serif;
+            font-size: 1.6rem;
+            font-weight: 800;
+            color: var(--ink);
+            letter-spacing: -0.03em;
+            line-height: 1.1;
         }
 
-        /* STAT CARDS */
-        .ft-stats { display: grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap: 14px; margin-bottom: 26px; }
+        .page-subtitle {
+            margin-top: 0.35rem;
+            font-size: 0.87rem;
+            color: var(--ink-3);
+        }
+
+        .header-actions { display: flex; align-items: center; gap: 0.6rem; }
+
+        .date-chip {
+            background: var(--surface);
+            border: 1px solid var(--border-md);
+            border-radius: 8px;
+            padding: 0.45rem 0.85rem;
+            font-size: 0.78rem;
+            color: var(--ink-3);
+            font-weight: 500;
+        }
+
+        .btn-add {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: var(--accent);
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            padding: 0.5rem 1.1rem;
+            font-family: 'Instrument Sans', sans-serif;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.15s;
+        }
+
+        .btn-add:hover { background: var(--accent-dk); }
+
+        /* ── STAT CARDS ── */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
         .stat-card {
-            background: white; border: 0.5px solid rgba(0,0,0,0.07);
-            border-radius: 16px; padding: 20px; position: relative; overflow: hidden;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 1.2rem 1.3rem;
+            position: relative;
+            overflow: hidden;
+            transition: box-shadow 0.2s;
         }
-        .stat-card.accent { background: #1a5c35; border-color: #1a5c35; }
-        .stat-card.accent::after {
-            content: ''; position: absolute; right: -22px; top: -22px;
-            width: 88px; height: 88px; border-radius: 50%;
-            background: rgba(255,255,255,0.07);
+
+        .stat-card:hover { box-shadow: 0 4px 16px rgba(26,25,22,0.07); }
+
+        .stat-card.featured {
+            background: var(--accent);
+            border-color: var(--accent-dk);
         }
+
+        .stat-card.featured::after {
+            content: '';
+            position: absolute;
+            top: -28px; right: -28px;
+            width: 90px; height: 90px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.08);
+        }
+
         .stat-icon {
-            width: 34px; height: 34px; border-radius: 10px;
+            width: 32px; height: 32px;
+            border-radius: 9px;
             display: flex; align-items: center; justify-content: center;
-            margin-bottom: 14px;
+            margin-bottom: 1rem;
+            font-size: 0.85rem;
         }
-        .si-green { background: #e8f5ee; }
-        .si-amber { background: #fef3e0; }
-        .si-blue  { background: #e6f0fc; }
-        .si-white { background: rgba(255,255,255,0.15); }
-        .stat-label { font-size: 11px; color: #999; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 5px; }
-        .accent .stat-label { color: rgba(255,255,255,0.6); }
-        .stat-value { font-size: 26px; font-weight: 600; color: #1a1916; line-height: 1; }
-        .accent .stat-value { color: white; }
-        .stat-sub { font-size: 12px; color: #aaa; margin-top: 5px; }
-        .accent .stat-sub { color: rgba(255,255,255,0.5); }
-        .stat-trend {
-            display: inline-flex; align-items: center; gap: 4px;
-            font-size: 11px; padding: 3px 9px; border-radius: 20px; margin-top: 6px;
-        }
-        .trend-up   { background: #e8f5ee; color: #1a5c35; }
-        .trend-flat { background: #f2f2f2; color: #888; }
 
-        /* LOWER GRID */
-        .ft-lower { display: grid; grid-template-columns: 1fr 272px; gap: 18px; }
+        .si-green  { background: var(--accent-lt); }
+        .si-orange { background: var(--orange-lt); }
+        .si-blue   { background: var(--blue-lt); }
+        .si-white  { background: rgba(255,255,255,0.16); }
 
-        /* TABLE CARD */
-        .table-card {
-            background: white; border: 0.5px solid rgba(0,0,0,0.07);
-            border-radius: 16px; overflow: hidden;
+        .stat-label {
+            font-size: 0.7rem;
+            font-weight: 600;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            color: var(--ink-3);
+            margin-bottom: 0.4rem;
         }
-        .table-card-head {
-            padding: 18px 22px 14px;
-            display: flex; align-items: center; justify-content: space-between;
-            border-bottom: 0.5px solid rgba(0,0,0,0.06);
+
+        .featured .stat-label { color: rgba(255,255,255,0.6); }
+
+        .stat-value {
+            font-family: 'Bricolage Grotesque', sans-serif;
+            font-size: 1.9rem;
+            font-weight: 800;
+            color: var(--ink);
+            line-height: 1;
+            letter-spacing: -0.04em;
         }
-        .table-card-title { font-size: 15px; font-weight: 600; color: #1a1916; }
-        .filter-pills { display: flex; gap: 6px; }
+
+        .featured .stat-value { color: #fff; }
+
+        .stat-meta {
+            margin-top: 0.5rem;
+            font-size: 0.75rem;
+            color: var(--ink-3);
+        }
+
+        .featured .stat-meta { color: rgba(255,255,255,0.5); }
+
+        .stat-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 3px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            padding: 2px 8px;
+            border-radius: 20px;
+            margin-top: 0.5rem;
+        }
+
+        .badge-green  { background: var(--accent-lt); color: var(--accent); }
+        .badge-orange { background: var(--orange-lt); color: var(--orange); }
+        .badge-blue   { background: var(--blue-lt);   color: var(--blue); }
+        .badge-muted  { background: #f0f0ee; color: var(--ink-3); }
+
+        /* ── LOWER GRID ── */
+        .lower-grid {
+            display: grid;
+            grid-template-columns: 1fr 280px;
+            gap: 1.2rem;
+        }
+
+        /* ── CARD BASE ── */
+        .card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            overflow: hidden;
+        }
+
+        .card-head {
+            padding: 1.1rem 1.4rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .card-title {
+            font-size: 0.92rem;
+            font-weight: 600;
+            color: var(--ink);
+        }
+
+        /* ── FILTER PILLS ── */
+        .filter-pills { display: flex; gap: 5px; }
+
         .fpill {
-            padding: 4px 12px; border-radius: 20px; font-size: 11px;
-            cursor: pointer; border: none; background: #f2f2f2; color: #777;
+            padding: 3px 11px;
+            border-radius: 20px;
+            font-size: 0.72rem;
+            font-weight: 500;
+            cursor: pointer;
+            border: none;
+            background: #f0f0ee;
+            color: var(--ink-3);
+            transition: background 0.12s, color 0.12s;
         }
-        .fpill.active { background: #1a5c35; color: white; }
-        .fpill:hover:not(.active) { background: #e8e8e8; }
 
-        table.ft-table { width: 100%; border-collapse: collapse; }
-        .ft-table thead tr { background: #f8f8f6; }
-        .ft-table th {
-            font-size: 11px; color: #999; text-transform: uppercase;
-            letter-spacing: 0.5px; padding: 10px 22px; text-align: left; font-weight: 400;
+        .fpill.active { background: var(--accent); color: #fff; }
+        .fpill:hover:not(.active) { background: #e4e4e0; color: var(--ink); }
+
+        /* ── WORKOUT TABLE ── */
+        .workout-table {
+            width: 100%;
+            border-collapse: collapse;
         }
-        .ft-table td { padding: 14px 22px; font-size: 13px; color: #1a1916; vertical-align: middle; }
-        .ft-table tbody tr { border-bottom: 0.5px solid rgba(0,0,0,0.05); }
-        .ft-table tbody tr:last-child { border-bottom: none; }
-        .ft-table tbody tr:hover { background: #fafaf8; }
 
-        .wbadge {
-            display: inline-flex; align-items: center; gap: 6px;
-            padding: 4px 11px; border-radius: 20px; font-size: 12px; font-weight: 500;
+        .workout-table thead tr {
+            background: #fafaf8;
+            border-bottom: 1px solid var(--border);
         }
-        .wbadge .dot { width: 7px; height: 7px; border-radius: 50%; }
-        .wb-run   { background: #e8f5ee; color: #1a5c35; }
-        .wb-run   .dot { background: #1a5c35; }
-        .wb-gym   { background: #e6f0fc; color: #1c5faa; }
-        .wb-gym   .dot { background: #3a8de0; }
-        .wb-cycle { background: #fef3e0; color: #a05c0a; }
-        .wb-cycle .dot { background: #e09a2a; }
-        .wb-other { background: #f2f2f2; color: #555; }
-        .wb-other .dot { background: #888; }
 
-        .dur-bar { display: flex; align-items: center; gap: 8px; }
-        .bar-track { width: 56px; height: 4px; border-radius: 4px; background: #f0f0ee; overflow: hidden; }
-        .bar-fill  { height: 100%; border-radius: 4px; background: #1a5c35; }
-
-        .kcal-val { font-size: 13px; font-weight: 500; color: #1a1916; }
-        .date-val { font-size: 12px; color: #aaa; }
-
-        /* EMPTY STATE */
-        .empty-row td {
-            padding: 44px 22px !important;
-            text-align: center; color: #bbb; font-size: 14px;
+        .workout-table th {
+            font-size: 0.68rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            color: var(--ink-3);
+            padding: 0.65rem 1.4rem;
+            text-align: left;
         }
+
+        .workout-table td {
+            padding: 0.9rem 1.4rem;
+            font-size: 0.85rem;
+            color: var(--ink);
+            vertical-align: middle;
+        }
+
+        .workout-table tbody tr {
+            border-bottom: 1px solid var(--border);
+            transition: background 0.12s;
+        }
+
+        .workout-table tbody tr:last-child { border-bottom: none; }
+        .workout-table tbody tr:hover { background: #fafaf8; }
+
+        /* badges */
+        .w-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .w-badge .dot { width: 6px; height: 6px; border-radius: 50%; }
+        .wb-run   { background: var(--accent-lt); color: var(--accent); }
+        .wb-run .dot   { background: var(--accent); }
+        .wb-gym   { background: var(--blue-lt); color: var(--blue); }
+        .wb-gym .dot   { background: var(--blue); }
+        .wb-cycle { background: var(--orange-lt); color: var(--orange); }
+        .wb-cycle .dot { background: var(--orange); }
+
+        /* duration bar */
+        .dur-wrap { display: flex; align-items: center; gap: 8px; }
+
+        .dur-bar {
+            width: 52px; height: 4px;
+            border-radius: 4px;
+            background: #eeede9;
+            overflow: hidden;
+        }
+
+        .dur-fill { height: 100%; border-radius: 4px; background: var(--accent); }
+
+        .kcal-pill {
+            display: inline-block;
+            font-size: 0.78rem;
+            font-weight: 600;
+            color: var(--orange);
+        }
+
+        .date-text { font-size: 0.78rem; color: var(--ink-3); }
+
+        /* empty state */
+        .empty-state {
+            padding: 3.5rem 1.5rem;
+            text-align: center;
+        }
+
         .empty-icon {
-            width: 48px; height: 48px; border-radius: 50%;
-            background: #f2f2f2; display: flex; align-items: center; justify-content: center;
-            margin: 0 auto 12px;
+            width: 48px; height: 48px;
+            border-radius: 50%;
+            background: #f0f0ee;
+            display: flex; align-items: center; justify-content: center;
+            margin: 0 auto 1rem;
+            font-size: 1.2rem;
         }
 
-        /* SIDEBAR */
-        .ft-sidebar { display: flex; flex-direction: column; gap: 14px; }
+        .empty-title { font-size: 0.92rem; font-weight: 600; color: var(--ink); margin-bottom: 0.3rem; }
+        .empty-text { font-size: 0.82rem; color: var(--ink-3); }
+
+        /* ── SIDEBAR ── */
+        .sidebar { display: flex; flex-direction: column; gap: 1rem; }
+
         .side-card {
-            background: white; border: 0.5px solid rgba(0,0,0,0.07);
-            border-radius: 16px; padding: 18px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 1.1rem 1.2rem;
         }
-        .side-title { font-size: 14px; font-weight: 600; margin-bottom: 14px; color: #1a1916; }
-        .goal-item { margin-bottom: 13px; }
+
+        .side-title {
+            font-size: 0.88rem;
+            font-weight: 600;
+            color: var(--ink);
+            margin-bottom: 1rem;
+            padding-bottom: 0.7rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        /* goal progress */
+        .goal-item { margin-bottom: 1rem; }
         .goal-item:last-child { margin-bottom: 0; }
-        .goal-row { display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 5px; }
-        .goal-name { color: #666; }
-        .goal-pct  { font-weight: 600; color: #1a1916; }
-        .prog-track { height: 6px; border-radius: 6px; background: #f0f0ee; overflow: hidden; }
-        .prog-fill  { height: 100%; border-radius: 6px; }
-        .pf-green { background: #1a5c35; }
-        .pf-blue  { background: #3a8de0; }
-        .pf-amber { background: #e09a2a; }
 
-        .mix-list { display: flex; flex-direction: column; gap: 10px; }
-        .mix-item { display: flex; align-items: center; gap: 10px; }
-        .mix-dot  { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
-        .md-green { background: #1a5c35; }
-        .md-blue  { background: #3a8de0; }
-        .md-amber { background: #e09a2a; }
-        .mix-name { font-size: 12px; color: #1a1916; flex: 1; }
-        .mix-count{ font-size: 12px; color: #aaa; }
+        .goal-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 5px;
+        }
 
-        /* MODAL */
-        .modal-content { border-radius: 16px; border: none; }
-        .modal-header { border-bottom: 0.5px solid rgba(0,0,0,0.07); padding: 18px 22px; }
-        .modal-title  { font-size: 16px; font-weight: 600; color: #1a1916; }
-        .modal-body   { padding: 22px; }
-        .form-label   { font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; color: #999; margin-bottom: 5px; }
-        .form-control, .form-select {
-            border-radius: 10px; border: 0.5px solid rgba(0,0,0,0.12);
-            font-size: 13px; padding: 10px 14px; background: #fafaf8;
+        .goal-name { font-size: 0.8rem; color: var(--ink-2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 160px; }
+        .goal-pct  { font-size: 0.78rem; font-weight: 700; color: var(--ink); margin-left: 8px; }
+
+        .prog-track { height: 5px; border-radius: 5px; background: #eeede9; overflow: hidden; }
+        .prog-fill  { height: 100%; border-radius: 5px; }
+        .pf-green  { background: var(--accent); }
+        .pf-orange { background: var(--orange); }
+        .pf-blue   { background: var(--blue); }
+
+        /* workout mix */
+        .mix-list { display: flex; flex-direction: column; gap: 0.7rem; }
+
+        .mix-item {
+            display: flex;
+            align-items: center;
+            gap: 9px;
         }
-        .form-control:focus, .form-select:focus {
-            border-color: #1a5c35; box-shadow: 0 0 0 3px rgba(26,92,53,0.08);
+
+        .mix-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+        .md-green  { background: var(--accent); }
+        .md-blue   { background: var(--blue); }
+        .md-orange { background: var(--orange); }
+
+        .mix-label { font-size: 0.82rem; color: var(--ink-2); flex: 1; }
+        .mix-count { font-size: 0.78rem; color: var(--ink-3); font-weight: 500; }
+
+        /* quick actions */
+        .quick-btn {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            width: 100%;
+            padding: 0.65rem 0.8rem;
+            border-radius: 9px;
+            border: 1px solid var(--border);
+            background: transparent;
+            font-family: 'Instrument Sans', sans-serif;
+            font-size: 0.83rem;
+            font-weight: 500;
+            color: var(--ink-2);
+            cursor: pointer;
+            text-decoration: none;
+            transition: background 0.12s, border-color 0.12s;
+            margin-bottom: 0.5rem;
         }
+
+        .quick-btn:last-child { margin-bottom: 0; }
+        .quick-btn:hover { background: var(--bg); border-color: var(--border-md); color: var(--ink); }
+
+        .qb-icon {
+            width: 28px; height: 28px;
+            border-radius: 7px;
+            background: var(--accent-lt);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 0.78rem;
+            flex-shrink: 0;
+        }
+
+        /* ── MODAL ── */
+        .modal-overlay {
+            position: fixed; inset: 0;
+            background: rgba(26,25,22,0.5);
+            backdrop-filter: blur(4px);
+            display: flex; align-items: center; justify-content: center;
+            z-index: 1000;
+            opacity: 0; visibility: hidden;
+            transition: opacity 0.2s, visibility 0.2s;
+        }
+
+        .modal-overlay.open { opacity: 1; visibility: visible; }
+
+        .modal-box {
+            background: var(--surface);
+            border-radius: 16px;
+            width: 100%;
+            max-width: 420px;
+            margin: 1rem;
+            box-shadow: 0 20px 60px rgba(26,25,22,0.2);
+            transform: translateY(10px);
+            transition: transform 0.2s;
+        }
+
+        .modal-overlay.open .modal-box { transform: translateY(0); }
+
+        .modal-head {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1.2rem 1.4rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .modal-title { font-size: 1rem; font-weight: 600; color: var(--ink); }
+
+        .modal-close {
+            width: 28px; height: 28px;
+            border-radius: 8px;
+            border: none;
+            background: #f0f0ee;
+            color: var(--ink-3);
+            cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1rem;
+            transition: background 0.12s;
+        }
+
+        .modal-close:hover { background: #e4e4e0; color: var(--ink); }
+
+        .modal-body { padding: 1.4rem; }
+
+        .m-group { margin-bottom: 1rem; }
+
+        .m-label {
+            display: block;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--ink-3);
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            margin-bottom: 0.42rem;
+        }
+
+        .m-input, .m-select, .m-textarea {
+            width: 100%;
+            padding: 0.72rem 0.9rem;
+            border: 1px solid var(--border-md);
+            border-radius: 9px;
+            font-family: 'Instrument Sans', sans-serif;
+            font-size: 0.88rem;
+            color: var(--ink);
+            background: #fafaf8;
+            outline: none;
+            transition: border-color 0.15s, box-shadow 0.15s;
+        }
+
+        .m-input:focus, .m-select:focus, .m-textarea:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(47,107,62,0.1);
+            background: #fff;
+        }
+
+        .m-textarea { resize: vertical; min-height: 72px; }
+
         .btn-save {
-            background: #1a5c35; color: white; border: none;
-            border-radius: 10px; padding: 11px; font-size: 14px;
-            font-weight: 500; width: 100%; cursor: pointer;
+            width: 100%;
+            padding: 0.82rem;
+            background: var(--accent);
+            color: #fff;
+            border: none;
+            border-radius: 9px;
+            font-family: 'Instrument Sans', sans-serif;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.15s;
         }
-        .btn-save:hover { background: #14472a; }
 
-        @media (max-width: 900px) {
-            .ft-stats { grid-template-columns: repeat(2, 1fr); }
-            .ft-lower  { grid-template-columns: 1fr; }
+        .btn-save:hover { background: var(--accent-dk); }
+
+        /* ── RESPONSIVE ── */
+        @media (max-width: 960px) {
+            .stats-grid { grid-template-columns: repeat(2, 1fr); }
+            .lower-grid { grid-template-columns: 1fr; }
         }
+
         @media (max-width: 560px) {
-            .ft-stats  { grid-template-columns: 1fr; }
-            .ft-page   { padding: 20px 16px 40px; }
-            .ft-nav    { padding: 12px 16px; }
+            .stats-grid { grid-template-columns: 1fr; }
+            .page-wrap { padding: 1.2rem 1rem 3rem; }
+            .page-header { flex-direction: column; gap: 0.8rem; }
         }
     </style>
 </head>
-
 <body>
 
-<!-- BG BLOBS -->
-<div class="ft-bg">
-    <div class="ft-blob1"></div>
-    <div class="ft-blob2"></div>
-</div>
 <!-- NAVBAR -->
 <div th:replace="fragments/navbar :: navbar('dashboard')"></div>
-<div class="ft-page">
 
-    <!-- HEADER -->
-    <div class="ft-header">
+<div class="page-wrap">
+
+    <!-- PAGE HEADER -->
+    <div class="page-header">
         <div>
-            <div class="ft-greeting">Dashboard</div>
-            <div class="ft-subtext">Welcome back &nbsp;👋&nbsp; Track your fitness journey</div>
+            <div class="page-title"
+                 th:text="'Welcome back, ' + ${session.user?.name?.split(' ')[0]} + ' 👋'">
+                Welcome back 👋
+            </div>
+            <div class="page-subtitle">Here's your fitness overview for today.</div>
         </div>
-        <div class="ft-date-badge" id="today-date">Loading...</div>
+        <div class="header-actions">
+            <div class="date-chip" id="today-date">Loading…</div>
+            <button class="btn-add" onclick="openModal()">
+                <svg width="13" height="13" viewBox="0 0 13 13" fill="none">
+                    <path d="M6.5 1v11M1 6.5h11" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+                </svg>
+                Add Workout
+            </button>
+        </div>
     </div>
 
     <!-- STAT CARDS -->
-    <div class="ft-stats">
+    <div class="stats-grid">
 
-        <!-- Streak (accent) -->
-        <div class="stat-card accent">
-            <div class="stat-icon si-white">
-                <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                    <path d="M8 1.5C8 1.5 4 5.2 4 8.5a4 4 0 008 0C12 5.2 8 1.5 8 1.5z" fill="white"/>
-                </svg>
-            </div>
-            <div class="stat-label">Streak</div>
-            <div class="stat-value">0 days</div>
-            <div class="stat-sub">Keep it going!</div>
+        <!-- Streak -->
+        <div class="stat-card featured">
+            <div class="stat-icon si-white">🔥</div>
+            <div class="stat-label">Current Streak</div>
+            <div class="stat-value" id="streak-count">0</div>
+            <div class="stat-meta">days — keep it going!</div>
         </div>
 
         <!-- Total Workouts -->
         <div class="stat-card">
             <div class="stat-icon si-green">
-                <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                    <rect x="1" y="6.5" width="3" height="3.5" rx="1" fill="#1a5c35"/>
-                    <rect x="12" y="6.5" width="3" height="3.5" rx="1" fill="#1a5c35"/>
-                    <rect x="4" y="4.5" width="8" height="7" rx="1.2" fill="#1a5c35" opacity="0.65"/>
-                    <rect x="6.5" y="2.5" width="3" height="11" rx="1.2" fill="#1a5c35"/>
+                <svg width="15" height="15" viewBox="0 0 15 15" fill="none">
+                    <rect x="1" y="6" width="3" height="3.5" rx="1" fill="#2f6b3e"/>
+                    <rect x="11" y="6" width="3" height="3.5" rx="1" fill="#2f6b3e"/>
+                    <rect x="4" y="4" width="7" height="7" rx="1" fill="#2f6b3e" opacity=".6"/>
+                    <rect x="6" y="2" width="3" height="11" rx="1" fill="#2f6b3e"/>
                 </svg>
             </div>
             <div class="stat-label">Total Workouts</div>
             <div class="stat-value" th:text="${#lists.size(workouts)}">0</div>
-            <div class="stat-trend trend-up">This month</div>
+            <div class="stat-badge badge-green">All time</div>
         </div>
 
         <!-- Calories -->
         <div class="stat-card">
-            <div class="stat-icon si-amber">
-                <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                    <path d="M8 2C8 2 5 5.5 5 8.5a3 3 0 006 0C11 5.5 8 2 8 2z" fill="#e09a2a"/>
-                    <path d="M8 7c0 0-1.5 1.5-1.5 2.5a1.5 1.5 0 003 0C9.5 8.5 8 7 8 7z" fill="#fef3e0"/>
-                </svg>
-            </div>
+            <div class="stat-icon si-orange">🔥</div>
             <div class="stat-label">Calories Burned</div>
-            <div class="stat-value" th:text="${#aggregates.sum(workouts.![duration * 10])}">0</div>
-            <div class="stat-trend trend-up">kcal total</div>
+            <div class="stat-value"
+                 th:text="${workouts.isEmpty() ? 0 : #aggregates.sum(workouts.![duration * 10])}">0</div>
+            <div class="stat-badge badge-orange">kcal total</div>
         </div>
 
-        <!-- Goal Progress -->
+        <!-- Goals -->
         <div class="stat-card">
             <div class="stat-icon si-blue">
-                <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                    <circle cx="8" cy="8" r="5.5" stroke="#3a8de0" stroke-width="1.5" fill="none"/>
-                    <path d="M8 5v3.5l2 2" stroke="#3a8de0" stroke-width="1.5" stroke-linecap="round"/>
+                <svg width="15" height="15" viewBox="0 0 15 15" fill="none">
+                    <circle cx="7.5" cy="7.5" r="5.5" stroke="#2563eb" stroke-width="1.3" fill="none"/>
+                    <path d="M7.5 5v3l1.5 1.5" stroke="#2563eb" stroke-width="1.3" stroke-linecap="round"/>
                 </svg>
             </div>
-            <div class="stat-label">Goal Progress</div>
-            <div class="stat-value">0%</div>
-            <div class="stat-trend trend-flat">Set a goal</div>
+            <div class="stat-label">Active Goals</div>
+            <div class="stat-value"
+                 th:text="${goals.isEmpty() ? 0 : #lists.size(goals.?[status == 'ACTIVE'])}">0</div>
+            <div class="stat-badge badge-blue">
+                <span th:text="${goals.isEmpty() ? 0 : #lists.size(goals)}">0</span>&nbsp;total
+            </div>
         </div>
 
     </div>
 
-    <!-- LOWER -->
-    <div class="ft-lower">
+    <!-- LOWER GRID -->
+    <div class="lower-grid">
 
-        <!-- WORKOUT TABLE -->
-        <div class="table-card">
-            <div class="table-card-head">
-                <div class="table-card-title">Recent Workouts</div>
+        <!-- WORKOUTS TABLE -->
+        <div class="card">
+            <div class="card-head">
+                <span class="card-title">Recent Workouts</span>
                 <div class="filter-pills">
-                    <button class="fpill active">All</button>
-                    <button class="fpill">Running</button>
-                    <button class="fpill">Gym</button>
-                    <button class="fpill">Cycling</button>
+                    <button class="fpill active" data-filter="all">All</button>
+                    <button class="fpill" data-filter="RUNNING">Running</button>
+                    <button class="fpill" data-filter="GYM">Gym</button>
+                    <button class="fpill" data-filter="CYCLING">Cycling</button>
                 </div>
             </div>
 
-            <table class="ft-table">
-                <thead>
-                    <tr>
-                        <th>Workout</th>
-                        <th>Duration</th>
-                        <th>Calories</th>
-                        <th>Date</th>
-                    </tr>
-                </thead>
-                <tbody>
-
-                    <!-- POPULATED ROWS -->
-                    <tr th:each="w : ${workouts}">
-                        <td>
-                            <span class="wbadge"
-                                  th:classappend="${w.workout == 'RUNNING' ? 'wb-run' : (w.workout == 'GYM' ? 'wb-gym' : (w.workout == 'CYCLING' ? 'wb-cycle' : 'wb-other'))}">
-                                <span class="dot"></span>
-                                <span th:text="${#strings.capitalize(#strings.toLowerCase(w.workout))}">Running</span>
-                            </span>
-                        </td>
-                        <td>
-                            <div class="dur-bar">
-                                <div class="bar-track">
-                                    <div class="bar-fill" th:style="'width:' + ${(w.duration > 60 ? 100 : (w.duration * 100 / 60))} + '%'"></div>
+            <!-- populated -->
+            <div th:if="${!workouts.isEmpty()}">
+                <table class="workout-table">
+                    <thead>
+                        <tr>
+                            <th>Type</th>
+                            <th>Duration</th>
+                            <th>Calories</th>
+                            <th>Date</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="w : ${workouts}"
+                            th:attr="data-type=${w.workout.name()}">
+                            <td>
+                                <span class="w-badge"
+                                      th:classappend="${w.workout.name() == 'RUNNING'} ? 'wb-run' :
+                                                     (${w.workout.name() == 'GYM'} ? 'wb-gym' : 'wb-cycle')">
+                                    <span class="dot"></span>
+                                    <span th:text="${#strings.capitalize(w.workout.name().toLowerCase())}">Type</span>
+                                </span>
+                            </td>
+                            <td>
+                                <div class="dur-wrap">
+                                    <div class="dur-bar">
+                                        <div class="dur-fill"
+                                             th:style="'width:' + ${w.duration > 90 ? 100 : (w.duration * 100 / 90)} + '%'"></div>
+                                    </div>
+                                    <span th:text="${w.duration} + ' min'">0 min</span>
                                 </div>
-                                <span th:text="${w.duration} + ' min'"></span>
-                            </div>
-                        </td>
-                        <td>
-                            <span class="kcal-val" th:text="${w.duration * 10} + ' kcal'"></span>
-                        </td>
-                        <td>
-                            <span class="date-val" th:text="${w.date}"></span>
-                        </td>
-                    </tr>
+                            </td>
+                            <td>
+                                <span class="kcal-pill" th:text="${w.duration * 10} + ' kcal'">0 kcal</span>
+                            </td>
+                            <td>
+                                <span class="date-text" th:text="${w.date}">Date</span>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
 
-                    <!-- EMPTY STATE -->
-                    <tr class="empty-row" th:if="${#lists.isEmpty(workouts)}">
-                        <td colspan="4">
-                            <div class="empty-icon">
-                                <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
-                                    <rect x="1.5" y="9" width="4" height="5" rx="1.2" fill="#ccc"/>
-                                    <rect x="16.5" y="9" width="4" height="5" rx="1.2" fill="#ccc"/>
-                                    <rect x="5.5" y="6" width="11" height="10" rx="2" fill="#e0e0e0"/>
-                                    <rect x="9" y="3" width="4" height="16" rx="2" fill="#ccc"/>
-                                </svg>
-                            </div>
-                            No workouts yet — start by adding one!
-                        </td>
-                    </tr>
-
-                </tbody>
-            </table>
+            <!-- empty -->
+            <div class="empty-state" th:if="${workouts.isEmpty()}">
+                <div class="empty-icon">🏋️</div>
+                <div class="empty-title">No workouts yet</div>
+                <div class="empty-text">Add your first workout to get started.</div>
+            </div>
         </div>
 
         <!-- SIDEBAR -->
-        <div class="ft-sidebar">
+        <div class="sidebar">
 
+            <!-- GOAL PROGRESS -->
             <div class="side-card">
                 <div class="side-title">Goal Progress</div>
-                <div class="goal-item">
-                    <div class="goal-row"><span class="goal-name">Weekly workouts</span><span class="goal-pct">0%</span></div>
-                    <div class="prog-track"><div class="prog-fill pf-green" style="width:0%"></div></div>
+
+                <div th:if="${!goals.isEmpty()}">
+                    <div th:each="g, gStat : ${goals}" th:if="${gStat.index < 3}" class="goal-item">
+                        <div class="goal-row">
+                            <span class="goal-name"
+                                  th:text="${g.goalType.toString().replace('_',' ')}">Goal</span>
+                            <span class="goal-pct"
+                                  th:text="${g.targetValue == 0 ? '0' :
+                                    #numbers.formatDecimal(g.currentValue * 100.0 / g.targetValue, 0, 0)} + '%'">0%</span>
+                        </div>
+                        <div class="prog-track">
+                            <div class="prog-fill"
+                                 th:classappend="${gStat.index == 0 ? 'pf-green' : (gStat.index == 1 ? 'pf-blue' : 'pf-orange')}"
+                                 th:style="'width:' + ${g.targetValue == 0 ? 0 :
+                                   (g.currentValue * 100.0 / g.targetValue > 100 ? 100 :
+                                    g.currentValue * 100.0 / g.targetValue)} + '%'"></div>
+                        </div>
+                    </div>
                 </div>
-                <div class="goal-item">
-                    <div class="goal-row"><span class="goal-name">Calorie target</span><span class="goal-pct">0%</span></div>
-                    <div class="prog-track"><div class="prog-fill pf-blue" style="width:0%"></div></div>
-                </div>
-                <div class="goal-item">
-                    <div class="goal-row"><span class="goal-name">Active minutes</span><span class="goal-pct">0%</span></div>
-                    <div class="prog-track"><div class="prog-fill pf-amber" style="width:0%"></div></div>
+
+                <div th:if="${goals.isEmpty()}" style="padding:0.5rem 0; text-align:center;">
+                    <div style="font-size:0.8rem; color:var(--ink-3);">No goals set yet.</div>
+                    <a href="/dashboard/setGoal" style="font-size:0.8rem; color:var(--accent); font-weight:600; text-decoration:none;">Set a goal →</a>
                 </div>
             </div>
 
+            <!-- WORKOUT MIX -->
             <div class="side-card">
                 <div class="side-title">Workout Mix</div>
                 <div class="mix-list">
                     <div class="mix-item">
                         <div class="mix-dot md-green"></div>
-                        <span class="mix-name">Running</span>
-                        <span class="mix-count" id="mix-run">0 sessions</span>
+                        <span class="mix-label">Running</span>
+                        <span class="mix-count"
+                              th:text="${#lists.size(workouts.?[workout.name() == 'RUNNING'])} + ' sessions'">0 sessions</span>
                     </div>
                     <div class="mix-item">
                         <div class="mix-dot md-blue"></div>
-                        <span class="mix-name">Gym</span>
-                        <span class="mix-count" id="mix-gym">0 sessions</span>
+                        <span class="mix-label">Gym</span>
+                        <span class="mix-count"
+                              th:text="${#lists.size(workouts.?[workout.name() == 'GYM'])} + ' sessions'">0 sessions</span>
                     </div>
                     <div class="mix-item">
-                        <div class="mix-dot md-amber"></div>
-                        <span class="mix-name">Cycling</span>
-                        <span class="mix-count" id="mix-cycle">0 sessions</span>
+                        <div class="mix-dot md-orange"></div>
+                        <span class="mix-label">Cycling</span>
+                        <span class="mix-count"
+                              th:text="${#lists.size(workouts.?[workout.name() == 'CYCLING'])} + ' sessions'">0 sessions</span>
                     </div>
                 </div>
             </div>
 
-        </div>
-    </div>
-</div>
-
-<!-- ADD WORKOUT MODAL -->
-<div class="modal fade" id="workoutModal" tabindex="-1">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-
-            <div class="modal-header">
-                <h5 class="modal-title">Add Workout</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-            </div>
-
-            <div class="modal-body">
-                <form action="/Workouts/add" method="post">
-
-                    <div class="mb-3">
-                        <label class="form-label">Workout Type</label>
-                        <select name="workoutName" class="form-select" required>
-                            <option value="">Select type</option>
-                            <option value="RUNNING">Running</option>
-                            <option value="GYM">Gym</option>
-                            <option value="CYCLING">Cycling</option>
-                        </select>
-                    </div>
-
-                    <div class="mb-3">
-                        <label class="form-label">Duration (minutes)</label>
-                        <input type="number" name="duration" class="form-control" placeholder="e.g. 45" min="1" required>
-                    </div>
-
-                    <div class="mb-3">
-                        <label class="form-label">Date</label>
-                        <input type="date" name="date" class="form-control" required>
-                    </div>
-
-                    <div class="mb-4">
-                        <label class="form-label">Notes (optional)</label>
-                        <textarea name="notes" class="form-control" rows="3" placeholder="How did it go?"></textarea>
-                    </div>
-
-                    <button type="submit" class="btn-save">Save Workout</button>
-
-                </form>
+            <!-- QUICK ACTIONS -->
+            <div class="side-card">
+                <div class="side-title">Quick Actions</div>
+                <button class="quick-btn" onclick="openModal()">
+                    <div class="qb-icon">➕</div> Log a Workout
+                </button>
+                <a href="/dashboard/setGoal" class="quick-btn">
+                    <div class="qb-icon">🎯</div> Set a New Goal
+                </a>
+                <a href="/dashboard/goals" class="quick-btn">
+                    <div class="qb-icon">📊</div> View All Goals
+                </a>
+                <a href="/dashboard/profile" class="quick-btn">
+                    <div class="qb-icon">👤</div> My Profile
+                </a>
             </div>
 
         </div>
     </div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script>
     // Date badge
-    const d = new Date();
     document.getElementById('today-date').textContent =
-        d.toLocaleDateString('en-US', { weekday:'short', day:'numeric', month:'short', year:'numeric' });
+        new Date().toLocaleDateString('en-US', { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' });
 
-    // Filter pills (visual only — backend handles actual filtering)
+    // Streak calculation from rendered workout dates
+    (function() {
+        var els = document.querySelectorAll('.date-text');
+        if (!els.length) return;
+        var allDates = Array.from(els).map(function(el) { return el.textContent.trim(); }).filter(Boolean);
+        var unique = Array.from(new Set(allDates)).sort().reverse();
+        var pad = function(n) { return String(n).padStart(2, '0'); };
+        var fmt = function(d) { return d.getFullYear() + '-' + pad(d.getMonth()+1) + '-' + pad(d.getDate()); };
+        var now = new Date();
+        var yd = new Date(now); yd.setDate(yd.getDate() - 1);
+        if (unique[0] !== fmt(now) && unique[0] !== fmt(yd)) return;
+        var streak = 1;
+        for (var i = 0; i < unique.length - 1; i++) {
+            var curr = new Date(unique[i] + 'T12:00:00');
+            var prev = new Date(unique[i+1] + 'T12:00:00');
+            if (Math.round((curr - prev) / 86400000) === 1) streak++;
+            else break;
+        }
+        document.getElementById('streak-count').textContent = streak;
+    })();
+
+    // Filter pills
     document.querySelectorAll('.fpill').forEach(pill => {
-        pill.addEventListener('click', function() {
+        pill.addEventListener('click', function () {
             document.querySelectorAll('.fpill').forEach(p => p.classList.remove('active'));
             this.classList.add('active');
+            const filter = this.dataset.filter;
+            document.querySelectorAll('tbody tr[data-type]').forEach(row => {
+                row.style.display = (filter === 'all' || row.dataset.type === filter) ? '' : 'none';
+            });
         });
     });
 </script>
+
 </body>
 </html>

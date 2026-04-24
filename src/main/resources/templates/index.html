@@ -463,6 +463,104 @@
         .wi-meta { font-size: 0.72rem; color: var(--ink3); margin-top: 1px; }
         .wi-kcal { font-size: 0.8rem; font-weight: 600; color: var(--orange); background: #fef0e8; padding: 3px 9px; border-radius: 100px; }
 
+        /* ─── ABOUT ─── */
+        .about-section { background: var(--bg2); }
+
+        .about-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 5rem;
+            align-items: start;
+        }
+
+        .about-lead {
+            margin-top: 1.5rem;
+            font-size: 1rem;
+            color: var(--ink);
+            line-height: 1.8;
+            font-weight: 500;
+        }
+
+        .about-body {
+            margin-top: 1rem;
+            font-size: 0.9rem;
+            color: var(--ink2);
+            line-height: 1.75;
+        }
+
+        .about-actions {
+            margin-top: 2rem;
+            display: flex;
+            gap: 0.9rem;
+            align-items: center;
+        }
+
+        .about-values {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1px;
+            background: var(--border);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            overflow: hidden;
+            margin-top: 0.5rem;
+        }
+
+        .av-card {
+            background: var(--white);
+            padding: 1.8rem 1.6rem;
+            transition: background 0.15s;
+        }
+
+        .av-card:hover { background: var(--bg); }
+
+        .av-ico {
+            font-size: 1.4rem;
+            margin-bottom: 0.9rem;
+            display: block;
+        }
+
+        .av-title {
+            font-family: 'Bricolage Grotesque', sans-serif;
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: var(--ink);
+            margin-bottom: 0.4rem;
+            letter-spacing: -0.02em;
+        }
+
+        .av-desc {
+            font-size: 0.82rem;
+            color: var(--ink2);
+            line-height: 1.65;
+        }
+
+        /* ─── STATS STRIP ─── */
+        .stats-strip {
+            background: var(--ink);
+            padding: 3rem 3.5rem;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 2rem;
+            text-align: center;
+        }
+
+        .ss-val {
+            font-family: 'Bricolage Grotesque', sans-serif;
+            font-size: 2.4rem;
+            font-weight: 800;
+            color: #fff;
+            letter-spacing: -0.04em;
+            line-height: 1;
+        }
+
+        .ss-lbl {
+            font-size: 0.8rem;
+            color: rgba(255,255,255,0.45);
+            margin-top: 0.4rem;
+            font-weight: 500;
+        }
+
         /* ─── CTA ─── */
         .cta-wrap {
             margin: 0 3.5rem 5rem;
@@ -505,10 +603,120 @@
             background: var(--bg);
         }
 
-        .foot-left { font-size: 0.82rem; color: var(--ink3); }
-        .foot-links { display: flex; gap: 1.8rem; }
-        .foot-links a { font-size: 0.82rem; color: var(--ink3); text-decoration: none; transition: color 0.15s; }
-        .foot-links a:hover { color: var(--ink); }
+        /* ── FOOTER ── */
+        .footer-main {
+            background: var(--ink);
+            padding: 4rem 3.5rem 0;
+        }
+
+        .footer-grid {
+            display: grid;
+            grid-template-columns: 1.6fr 1fr 1fr 1fr;
+            gap: 3rem;
+            padding-bottom: 3.5rem;
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+        }
+
+        .footer-brand .nav-logo {
+            color: #fff;
+            margin-bottom: 1rem;
+        }
+
+        .footer-brand .logo-mark {
+            background: var(--accent);
+        }
+
+        .footer-tagline {
+            font-size: 0.84rem;
+            color: rgba(255,255,255,0.45);
+            line-height: 1.7;
+            max-width: 220px;
+            margin-bottom: 1.5rem;
+        }
+
+        .footer-socials {
+            display: flex;
+            gap: 8px;
+        }
+
+        .social-btn {
+            width: 34px; height: 34px;
+            border-radius: 9px;
+            background: rgba(255,255,255,0.07);
+            border: 1px solid rgba(255,255,255,0.1);
+            display: flex; align-items: center; justify-content: center;
+            color: rgba(255,255,255,0.5);
+            text-decoration: none;
+            font-size: 0.8rem;
+            transition: background 0.15s, color 0.15s;
+        }
+
+        .social-btn:hover {
+            background: var(--accent);
+            color: #fff;
+            border-color: var(--accent);
+        }
+
+        .footer-col-title {
+            font-family: 'Bricolage Grotesque', sans-serif;
+            font-size: 0.72rem;
+            font-weight: 700;
+            letter-spacing: 0.09em;
+            text-transform: uppercase;
+            color: rgba(255,255,255,0.35);
+            margin-bottom: 1.2rem;
+        }
+
+        .footer-links {
+            display: flex;
+            flex-direction: column;
+            gap: 0.65rem;
+        }
+
+        .footer-links a {
+            font-size: 0.86rem;
+            color: rgba(255,255,255,0.55);
+            text-decoration: none;
+            transition: color 0.15s;
+        }
+
+        .footer-links a:hover { color: #fff; }
+
+        .footer-bottom {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1.4rem 0;
+        }
+
+        .footer-copy {
+            font-size: 0.79rem;
+            color: rgba(255,255,255,0.28);
+        }
+
+        .footer-badge {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.76rem;
+            color: rgba(255,255,255,0.28);
+        }
+
+        .footer-badge span {
+            width: 6px; height: 6px;
+            border-radius: 50%;
+            background: var(--accent);
+            animation: pulse 2s infinite;
+        }
+
+        @media (max-width: 900px) {
+            .footer-grid { grid-template-columns: 1fr 1fr; gap: 2rem; }
+            .footer-main { padding: 3rem 1.5rem 0; }
+        }
+
+        @media (max-width: 540px) {
+            .footer-grid { grid-template-columns: 1fr; }
+        }
 
         @keyframes fadeUp { from { opacity:0; transform:translateY(20px); } to { opacity:1; transform:translateY(0); } }
 
@@ -520,10 +728,16 @@
             .feat-grid { grid-template-columns: 1fr; }
             .feat-cell.wide { grid-column: span 1; }
             .how-grid { grid-template-columns: 1fr; gap: 2.5rem; }
+            .about-grid { grid-template-columns: 1fr; gap: 2.5rem; }
+            .stats-strip { grid-template-columns: repeat(2, 1fr); padding: 2.5rem 1.5rem; gap: 1.5rem; }
             .cta-wrap { margin: 0 1.5rem 3.5rem; padding: 3rem 2rem; }
-            footer { flex-direction: column; gap: 1.2rem; text-align: center; padding: 1.5rem; }
         }
-		workout-scroll-section{
+
+        @media (max-width: 540px) {
+            .stats-strip { grid-template-columns: repeat(2, 1fr); }
+            .about-values { grid-template-columns: 1fr; }
+        }
+		.workout-scroll-section{
 		  padding:5rem 0;
 		  border-bottom:1px solid var(--border);
 		  overflow:hidden;
@@ -841,6 +1055,69 @@
     </div>
 </section>
 
+<!-- STATS STRIP -->
+<div class="stats-strip">
+    <div>
+        <div class="ss-val">50k+</div>
+        <div class="ss-lbl">Athletes using FitTrack</div>
+    </div>
+    <div>
+        <div class="ss-val">2M+</div>
+        <div class="ss-lbl">Workouts logged</div>
+    </div>
+    <div>
+        <div class="ss-val">4.9★</div>
+        <div class="ss-lbl">Average user rating</div>
+    </div>
+    <div>
+        <div class="ss-val">98%</div>
+        <div class="ss-lbl">Goal completion rate</div>
+    </div>
+</div>
+
+<!-- ABOUT US -->
+<section id="about" class="about-section">
+    <div class="about-grid">
+        <div>
+            <span class="label-tag">About FitTrack</span>
+            <h2 class="section-h">Built for athletes,<br>by athletes.</h2>
+            <p class="about-lead">We started FitTrack because serious athletes deserved a serious tool — not a bloated app full of ads and distractions. One focused platform. Real data. Real results.</p>
+            <p class="about-body">Today, over 50,000 athletes across the globe use FitTrack to log every workout, track calorie burn, and hit personal goals. Whether you're training for your first 5K or your tenth marathon, FitTrack scales with your ambition.</p>
+            <p class="about-body" style="margin-top:0.75rem;">Our platform is built around three beliefs: fitness data should be simple to capture, powerful to analyse, and always private. No ads. No data selling. Just you and your goals.</p>
+            <div class="about-actions">
+                <a href="/auth/signup" class="btn-primary">
+                    Start for free
+                    <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M2.5 6.5h8M6.5 2.5l4 4-4 4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                </a>
+                <a href="#features" class="btn-secondary">Explore features</a>
+            </div>
+        </div>
+
+        <div class="about-values">
+            <div class="av-card">
+                <span class="av-ico">🎯</span>
+                <div class="av-title">Focused by design</div>
+                <div class="av-desc">No noise. Every feature exists to help you train better, not to distract you with unnecessary complexity.</div>
+            </div>
+            <div class="av-card">
+                <span class="av-ico">📊</span>
+                <div class="av-title">Data that matters</div>
+                <div class="av-desc">Real numbers, real progress. We turn raw workout data into insights that actually change how you train.</div>
+            </div>
+            <div class="av-card">
+                <span class="av-ico">🔒</span>
+                <div class="av-title">Privacy first</div>
+                <div class="av-desc">Your health data is yours. We never sell, share, or monetise any of your personal fitness information.</div>
+            </div>
+            <div class="av-card">
+                <span class="av-ico">⚡</span>
+                <div class="av-title">Built for speed</div>
+                <div class="av-desc">Log a full workout in under 10 seconds. Fast tools built for athletes who'd rather train than tap.</div>
+            </div>
+        </div>
+    </div>
+</section>
+
 <!-- CTA -->
 <div style="padding: 5rem 0 2rem;">
     <div class="cta-wrap">
@@ -855,12 +1132,64 @@
 </div>
 
 <!-- FOOTER -->
-<footer>
-    <div class="foot-left">© 2026 FitTrack · Built by Mawa 💪</div>
-    <div class="foot-links">
-        <a href="#">Privacy</a>
-        <a href="#">Terms</a>
-        <a href="#">Contact</a>
+<footer class="footer-main">
+    <div class="footer-grid">
+
+        <!-- Brand column -->
+        <div class="footer-brand">
+            <a class="nav-logo" href="/">
+                <span class="logo-mark">F</span>
+                FitTrack
+            </a>
+            <p class="footer-tagline">Your all-in-one fitness dashboard. Log workouts, track calories, hit goals — all in one place.</p>
+            <div class="footer-socials">
+                <a href="#" class="social-btn" title="Twitter">𝕏</a>
+                <a href="#" class="social-btn" title="Instagram">&#9651;</a>
+                <a href="#" class="social-btn" title="GitHub">⌥</a>
+            </div>
+        </div>
+
+        <!-- Product column -->
+        <div>
+            <div class="footer-col-title">Product</div>
+            <div class="footer-links">
+                <a href="/auth/signup">Get Started</a>
+                <a href="#features">Features</a>
+                <a href="#workouts">Workouts</a>
+                <a href="/auth/signin">Sign In</a>
+            </div>
+        </div>
+
+        <!-- About Us column -->
+        <div>
+            <div class="footer-col-title">About Us</div>
+            <div class="footer-links">
+                <a href="#about">Our Mission</a>
+                <a href="#">Blog</a>
+                <a href="#">Careers</a>
+                <a href="#">Press</a>
+            </div>
+        </div>
+
+        <!-- Legal column -->
+        <div>
+            <div class="footer-col-title">Legal</div>
+            <div class="footer-links">
+                <a href="#">Privacy Policy</a>
+                <a href="#">Terms of Service</a>
+                <a href="#">Cookie Policy</a>
+                <a href="#">Contact Us</a>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="footer-bottom">
+        <div class="footer-copy">© 2026 FitTrack. All rights reserved.</div>
+        <div class="footer-badge">
+            <span></span>
+            All systems operational
+        </div>
     </div>
 </footer>
 <script>
