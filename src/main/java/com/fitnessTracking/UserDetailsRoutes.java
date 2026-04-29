@@ -113,6 +113,6 @@ public class UserDetailsRoutes {
 
 	    model.addAttribute("goals", goals);
 
-	    return "goals";
+	    return "Goals";
 	}
 }
