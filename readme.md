@@ -97,3 +97,8 @@ The project follows a **layered architecture pattern**:
 ```bash
 git clone https://github.com/your-username/fitness-tracker.git
 cd fitness-tracker
+
+## Upcoming features
+- Ai recomendations
+- AI workout plan
+
