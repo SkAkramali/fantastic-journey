@@ -3,7 +3,7 @@
 A full-stack **Fitness Tracking Web Application** built using **Java Spring Boot** and **Thymeleaf** that allows users to manage workouts, track calorie intake, and monitor fitness goals in a simple and effective way.
 
 🌐 **Live Application**  
-👉 http://fantastic-journey-production-cee3.up.railway.app/
+👉 https://fantastic-journey-6oot.onrender.com
 
 ---
 
